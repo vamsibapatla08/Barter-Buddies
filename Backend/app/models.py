@@ -1,4 +1,5 @@
 from __future__ import annotations
+from datetime import datetime
 
 from pydantic import BaseModel, Field
 
@@ -79,12 +80,13 @@ class ExchangeIn(BaseModel):
 class ExchangeOut(BaseModel):
     id: str
     status: str
-    created_at: str
+    created_at: datetime
+    updated_at: datetime
     source: str
     requester: PersonRef
     recipient: PersonRef
     terms: TermsIn
-    locked_at: str | None = None
+    locked_at: datetime | None = None
     requester_completed: bool
     recipient_completed: bool
     thread_id: str | None = None
@@ -117,8 +119,8 @@ class MatchOut(BaseModel):
     file_code: str | None = None
     score: int
     mutual: bool
-    they_give: SkillRef
-    you_give: SkillRef
+    they_give: SkillRef | None = None
+    you_give: SkillRef | None = None
     breakdown: Breakdown
 
 

@@ -35,8 +35,8 @@ def get_matches(user_id: str = Depends(current_user)):
         score = score_match(my_wants, my_offers, their_wants, their_offers)
         if score <= 0:
             continue
-        they_give_row = next(row for row in person["offers"] if row["category"] in my_wants)
-        you_give_row = next(row for row in mine if row["category"] in their_wants and row["kind"] == "offer")
+        they_give_row = next((row for row in person["offers"] if row["category"] in my_wants), None)
+        you_give_row = next((row for row in mine if row["category"] in their_wants and row["kind"] == "offer"), None)
         matches.append({
             "user_id": person["user_id"], "name": person["name"], "file_code": person["file_code"],
             "score": score, "mutual": bool(my_wants & their_offers and their_wants & my_offers),
