@@ -1,8 +1,5 @@
 def score_match(my_wants, my_offers, their_wants, their_offers) -> int:
-    """Score how good a trade between two people would be.
-
-    All four arguments are sets of skill IDs like {"CALCULUS_TUTORING"}.
-    """
+    """Score shared skill identifiers, awarding a bonus for reciprocal overlap."""
     they_cover = len(my_wants & their_offers)
     i_cover = len(their_wants & my_offers)
 
