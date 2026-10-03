@@ -1,7 +1,52 @@
-from pydantic import BaseModel
+from __future__ import annotations
+
+from pydantic import BaseModel, Field
+
+
+class PersonRef(BaseModel):
+    id: str
+    name: str
+    file_code: str | None = None
 
 
 # ===== Vamsi (B1) =====
+
+
+class ListingIn(BaseModel):
+    title: str = Field(min_length=1, max_length=120)
+    description: str = Field(min_length=1, max_length=2000)
+    category: str = Field(min_length=1, max_length=80)
+
+
+class ListingOut(ListingIn):
+    id: str
+    owner: PersonRef | None = None
+
+
+class ProfilePatch(BaseModel):
+    name: str | None = Field(default=None, min_length=1, max_length=120)
+    file_code: str | None = Field(default=None, max_length=32)
+    bio: str | None = Field(default=None, max_length=1000)
+    location: str | None = Field(default=None, max_length=120)
+
+
+class ProfileOut(BaseModel):
+    id: str
+    name: str
+    file_code: str | None = None
+    bio: str | None = None
+    location: str | None = None
+    rank: str | None = None
+    rating: float = 0
+    review_count: int = 0
+    completed_exchanges: int = 0
+    reviews: list[dict] = Field(default_factory=list)
+
+
+class ReportIn(BaseModel):
+    reported_user_id: str | None = None
+    listing_id: str | None = None
+    reason: str = Field(min_length=1, max_length=1000)
 
 
 # ===== Abhyuday (B2) =====
@@ -12,12 +57,6 @@ from pydantic import BaseModel
 class SkillRef(BaseModel):
     skill_id: str
     label: str
-
-
-class PersonRef(BaseModel):
-    id: str
-    name: str
-    file_code: str | None = None
 
 
 class TermsIn(BaseModel):
