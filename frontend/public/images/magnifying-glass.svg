@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="160" height="205" viewBox="0 0 160 205">
+  <defs>
+    <linearGradient id="brass" x1="30" y1="15" x2="119" y2="125" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#61482e"/><stop offset=".22" stop-color="#dcc493"/><stop offset=".37" stop-color="#967341"/><stop offset=".55" stop-color="#f0d9a5"/><stop offset=".76" stop-color="#9e7b48"/><stop offset="1" stop-color="#493620"/>
+    </linearGradient>
+    <linearGradient id="handle">
+      <stop stop-color="#171a18"/><stop offset=".3" stop-color="#474a40"/><stop offset=".45" stop-color="#58584b"/><stop offset=".63" stop-color="#2b2e29"/><stop offset="1" stop-color="#111612"/>
+    </linearGradient>
+    <linearGradient id="lens" x1=".1" y1="0" x2=".9" y2="1">
+      <stop stop-color="#ecf8e9" stop-opacity=".28"/><stop offset=".45" stop-color="#e4f3e5" stop-opacity=".03"/><stop offset="1" stop-color="#6c9b8b" stop-opacity=".17"/>
+    </linearGradient>
+  </defs>
+  <path d="M70 117h20v25H70z" fill="url(#brass)" stroke="#654e30" stroke-width="1"/>
+  <path d="M69 139Q80 135 91 139L94 188Q94 200 80 200Q66 200 66 188Z" fill="url(#handle)" stroke="#24291f" stroke-width="1"/>
+  <path d="M69 141Q80 144 91 141M69 145Q80 148 91 145" fill="none" stroke="#ac9468" stroke-width="1.5"/>
+  <path d="M72 151L70 187Q70 192 74 193" fill="none" stroke="#a3a38b" stroke-opacity=".25" stroke-width="1.4"/>
+  <circle cx="80" cy="65" r="55" fill="url(#brass)" stroke="#5b4328" stroke-width="1" mask="url(#clear)"/>
+  <circle cx="80" cy="65" r="49.5" fill="none" stroke="#f2dcb0" stroke-opacity=".8" stroke-width="1"/>
+  <circle cx="80" cy="65" r="46.5" fill="url(#lens)" stroke="#5e5b44" stroke-width="2"/>
+  <!-- The open lens is transparent so the actual cork remains visible. -->
+  <mask id="clear"><rect width="160" height="205" fill="white"/><circle cx="80" cy="65" r="45.5" fill="black"/></mask>
+  <path d="M43 52A40 40 0 0 1 80 25" fill="none" stroke="#fffced" stroke-opacity=".65" stroke-width="2.5" stroke-linecap="round"/>
+  <path d="M106 94A39 39 0 0 0 118 69" fill="none" stroke="#f6f7dc" stroke-opacity=".4" stroke-width="1.2" stroke-linecap="round"/>
+</svg>

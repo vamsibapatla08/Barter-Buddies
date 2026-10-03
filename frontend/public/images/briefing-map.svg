@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="340" height="460" viewBox="0 0 340 460">
+  <defs>
+    <pattern id="blocks" width="72" height="86" patternUnits="userSpaceOnUse" patternTransform="rotate(-13 170 230)">
+      <rect width="72" height="86" fill="#e6decb"/>
+      <path d="M0 0H72M0 0V86M0 43H72M36 0V86" stroke="#c3bda9" stroke-width="7"/>
+      <path d="M0 0H72M0 0V86M0 43H72M36 0V86" stroke="#f8f1df" stroke-width="5"/>
+      <g fill="#cec7b4" stroke="#b5ae9c" stroke-width=".4">
+        <path d="M8 8h20v12H8zM9 24h18v11H9zM44 8h19v26H44zM8 51h9v25H8zM21 52h8v24h-8zM44 51h20v11H44zM44 67h18v10H44z"/>
+      </g>
+    </pattern>
+    <linearGradient id="paper" x2="1" y2="1">
+      <stop stop-color="#f4eddc"/><stop offset=".55" stop-color="#ebe1cc"/><stop offset="1" stop-color="#d9c9aa"/>
+    </linearGradient>
+    <linearGradient id="fold">
+      <stop stop-color="#7b6845" stop-opacity="0"/><stop offset=".47" stop-color="#7b6845" stop-opacity=".04"/>
+      <stop offset=".5" stop-color="#7b6845" stop-opacity=".19"/><stop offset=".51" stop-color="#fffdf0" stop-opacity=".6"/>
+      <stop offset=".6" stop-color="#fffdf0" stop-opacity=".05"/><stop offset="1" stop-color="#fffdf0" stop-opacity="0"/>
+    </linearGradient>
+    <filter id="grain" x="0" y="0" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency=".85" numOctaves="3" stitchTiles="stitch"/>
+      <feColorMatrix type="saturate" values="0"/>
+      <feComponentTransfer><feFuncA type="linear" slope=".1"/></feComponentTransfer>
+      <feBlend in="SourceGraphic" mode="multiply"/>
+    </filter>
+    <clipPath id="map"><path d="M15 42H325V422H15z"/></clipPath>
+  </defs>
+  <path d="M1 2L337 0 340 455 4 460Z" fill="url(#paper)" stroke="#b6a27f" stroke-width="1"/>
+  <g filter="url(#grain)">
+    <g clip-path="url(#map)">
+      <rect x="15" y="42" width="310" height="380" fill="url(#blocks)"/>
+      <path d="M35 24C155 126 115 193 189 265S252 341 211 446" fill="none" stroke="#a1b7b5" stroke-width="32"/>
+      <path d="M35 24C155 126 115 193 189 265S252 341 211 446" fill="none" stroke="#bed0c9" stroke-width="26"/>
+      <path d="M248 87l50-12 15 63-51 13zM24 304l48-11 18 60-47 14z" fill="#bac4a5" stroke="#a2ae91"/>
+      <g fill="none" stroke-linecap="round">
+        <path d="M-10 212L348 119M-10 359L340 277M203 20L303 450" stroke="#b7a887" stroke-width="12"/>
+        <path d="M-10 212L348 119M-10 359L340 277M203 20L303 450" stroke="#f8efd9" stroke-width="9"/>
+        <path d="M-10 212L348 119M-10 359L340 277M203 20L303 450" stroke="#d7bd8c" stroke-width="3"/>
+        <path d="M22 404L100 245 173 176 326 48" stroke="#807f70" stroke-width="1.5"/>
+        <path d="M22 404L100 245 173 176 326 48" stroke="#807f70" stroke-width="5" stroke-dasharray="1 7"/>
+      </g>
+      <g fill="#757565" font-family="Georgia,serif" font-size="6" letter-spacing="1.4">
+        <text x="246" y="109" transform="rotate(-13 246 109)">GARDENS</text>
+        <text x="227" y="201" transform="rotate(76 227 201)">NORTH AVENUE</text>
+        <text x="230" y="302" transform="rotate(-13 230 302)">MARKET STREET</text>
+        <text x="163" y="342" transform="rotate(65 163 342)">RIVER</text>
+      </g>
+      <path d="M272 156l-15 35 15 62 18 68" fill="none" stroke="#8b3940" stroke-width="1.3" stroke-dasharray="3 4" opacity=".7"/>
+      <g fill="none" stroke="#87353b" stroke-width="1.5">
+        <ellipse cx="272" cy="156" rx="12" ry="10" transform="rotate(-17 272 156)"/>
+        <ellipse cx="290" cy="321" rx="11" ry="12" transform="rotate(14 290 321)"/>
+      </g>
+      <g fill="#87353b"><circle cx="272" cy="156" r="2.5"/><circle cx="290" cy="321" r="2.5"/></g>
+      <text x="272" y="184" text-anchor="middle" fill="#87353b" stroke="#f4eddc" stroke-width="2" paint-order="stroke" font-family="Georgia,serif" font-size="15" font-weight="bold" letter-spacing="1">UTSA</text>
+    </g>
+    <path d="M15 42H325V422H15Z" fill="none" stroke="#9f967e" stroke-width=".7"/>
+    <rect x="155" y="2" width="30" height="453" fill="url(#fold)"/>
+    <rect x="-240" y="3" width="28" height="334" fill="url(#fold)" transform="rotate(-90)"/>
+  </g>
+  <g fill="#71674e" font-family="Georgia,serif">
+    <text x="17" y="27" font-size="10" letter-spacing="2.4">NEIGHBOURHOOD GUIDE</text>
+    <text x="17" y="440" font-size="7" letter-spacing="1">LOCAL CONNECTIONS</text>
+  </g>
+  <g transform="translate(295 387)" stroke="#79715e" fill="none" stroke-width=".8">
+    <path d="M0-16V12M-10 0H10M0-16l-3 7h6Z"/>
+    <text y="-20" text-anchor="middle" fill="#79715e" stroke="none" font-family="serif" font-size="7">N</text>
+  </g>
+</svg>

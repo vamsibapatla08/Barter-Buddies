@@ -1,0 +1,3 @@
+Tool: built-in image generation.
+
+Create a seamless tileable photographic corkboard texture for a website background. Straight-on flat macro photograph of fine natural golden tan cork, small densely packed irregular cork granules and tiny dark pores. Match an ordinary warm light brown cork notice board. Uniform soft diffuse illumination across the entire image, consistent scale and color, understated contrast, natural matte texture. Square image. Texture fills every edge. No objects, pins, paper, photographs, threads, text, borders, shadows, vignette, gradients or decorations. All edges should tile seamlessly.

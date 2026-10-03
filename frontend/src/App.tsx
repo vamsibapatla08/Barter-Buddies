@@ -1,8 +1,18 @@
 import { useEffect, useState } from 'react'
 import { getFeed } from './lib/api'
 import type { Listing } from './types'
+import AddDetailsPage from './pages/AddDetailsPage'
+import LoginPage from './pages/LoginPage'
 
 function App() {
+  // Small route boundary until the application adopts a router.
+  const path = window.location.pathname.replace(/\/$/, '')
+  if (path === '/login') return <LoginPage />
+  if (path === '/add-details') return <AddDetailsPage />
+  return <FeedPage />
+}
+
+function FeedPage() {
   const [listings, setListings] = useState<Listing[]>([])
   const [error, setError] = useState<string | null>(null)
 
@@ -18,9 +28,9 @@ function App() {
         <a className="brand" href="/">
           Barter Buddies
         </a>
-        <button className="button button-secondary" type="button">
+        <a className="button button-secondary" href="/login">
           Sign in
-        </button>
+        </a>
       </nav>
 
       <section className="hero">

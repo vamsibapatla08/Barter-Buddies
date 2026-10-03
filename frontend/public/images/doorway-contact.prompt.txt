@@ -1,0 +1,3 @@
+Tool: built-in image generation.
+
+Use case: photorealistic-natural. Asset: small decorative monochrome photograph for a heist-themed corkboard login page. Black-and-white analog photograph of an anonymous old stone building service entrance: a dark solid wooden doorway, small metal lock and worn stone threshold, narrow wall lamp above. Slightly oblique view from across the quiet lane. Authentic silver gelatin film grain, natural late afternoon shadow, restrained contrast with readable midtones, documentary surveillance-photo mood. Landscape composition. No people, weapons, readable signage, text, timestamps, UI, borders, paperclips, filmstrip perforations or watermark. Only the photographic scene, edge to edge.
