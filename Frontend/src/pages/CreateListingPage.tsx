@@ -98,7 +98,7 @@ export default function CreateListingPage() {
             </fieldset>
             <fieldset className="listing-box listing-validate">
               <legend>Validate Listing</legend>
-              <label><input type="checkbox" required /> I’ve checked the details and this exchange is ready.</label>
+              <label><input type="checkbox" required /> Confirmed the barter details.</label>
             </fieldset>
             <div className="listing-actions">
               <button className="details-submit listing-publish" type="submit">Publish</button>
