@@ -71,17 +71,14 @@ export default function CreateListingPage() {
           board.current?.style.setProperty('--listing-scroll-offset', `${offset}px`)
         }}>
           <header className="login-header">
-            <p className="login-eyebrow">New exchange file</p>
-            <h1 id="listing-heading">Plant a Job</h1>
+            <h1 id="listing-heading">Publish a Barter</h1>
             <p className="listing-intro">Start a listing and give the crew the coordinates for a fair exchange.</p>
           </header>
           <form onSubmit={event => event.preventDefault()}>
             <fieldset className="listing-box">
-              <legend>Plant a Job</legend>
+              <legend>Listing</legend>
               <label htmlFor="listing-title">Start a listing</label>
               <input id="listing-title" name="title" type="text" placeholder="What can you teach or help with?" required />
-              <label htmlFor="listing-description">Briefing</label>
-              <textarea id="listing-description" name="description" rows={3} placeholder="Describe the job or skill." required />
             </fieldset>
             <fieldset className="listing-box">
               <legend>Offer</legend>
@@ -96,14 +93,17 @@ export default function CreateListingPage() {
             <fieldset className="listing-box listing-coordinates">
               <legend>Coordinates</legend>
               <div><label htmlFor="listing-date">Date</label><select id="listing-date" name="date" defaultValue=""><option value="" disabled>Select date</option><option>Today</option><option>Tomorrow</option><option>This weekend</option></select></div>
-              <div><label htmlFor="listing-place">Place</label><select id="listing-place" name="place" defaultValue=""><option value="" disabled>Select place</option><option>Online</option><option>Community room</option><option>Public library</option></select></div>
               <div><label htmlFor="listing-time">Time</label><select id="listing-time" name="time" defaultValue=""><option value="" disabled>Select time</option><option>Morning</option><option>Afternoon</option><option>Evening</option></select></div>
+              <div><label htmlFor="listing-place">Place</label><input id="listing-place" name="place" type="text" placeholder="Enter a meetup place" required /></div>
             </fieldset>
             <fieldset className="listing-box listing-validate">
               <legend>Validate Listing</legend>
               <label><input type="checkbox" required /> I’ve checked the details and this exchange is ready.</label>
             </fieldset>
-            <button className="details-submit listing-publish" type="submit">Publish</button>
+            <div className="listing-actions">
+              <button className="details-submit listing-publish" type="submit">Publish</button>
+              <a className="listing-skip" href="/" aria-label="Skip creating a listing and return to the community">Skip</a>
+            </div>
           </form>
         </section>
         <footer className="login-footer"><span>The briefing room</span><a href="/">Back to the community</a></footer>
