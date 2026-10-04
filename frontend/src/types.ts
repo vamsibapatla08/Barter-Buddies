@@ -27,14 +27,6 @@ export type Skill = {
   category: string
 }
 
-<<<<<<< HEAD
-export type ListingCreateIn = {
-  title: string
-  description: string
-  category: string
-  meet_spot: string | null
-  mode: 'in_person' | 'online'
-=======
 export type ListingMode = 'in_person' | 'online'
 
 /** Body of POST /listings. Mirrors ListingIn in backend/app/models.py. */
@@ -58,9 +50,10 @@ export type CreatedListing = {
   category: string
   meet_spot: string | null
   mode: string | null
->>>>>>> e13a31ac52a5c304b2188da547b6a3859c0dc118
   available_when: string | null
 }
+
+export type ListingCreateIn = ListingInput
 
 export type Match = {
   user_id: string

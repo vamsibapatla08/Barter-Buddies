@@ -1,9 +1,5 @@
 import { supabase } from './supabase'
-<<<<<<< HEAD
-import type { Listing, ListingCreateIn, Match, Skill } from '../types'
-=======
-import type { CreatedListing, Listing, ListingInput, Match, Skill } from '../types'
->>>>>>> e13a31ac52a5c304b2188da547b6a3859c0dc118
+import type { CreatedListing, Listing, ListingCreateIn, Match, Skill } from '../types'
 
 const API_URL = import.meta.env.VITE_API_URL
 
@@ -68,13 +64,8 @@ export function getFeed(category?: string): Promise<Listing[]> {
   return apiFetch<Listing[]>(`/feed${query}`)
 }
 
-<<<<<<< HEAD
-export function createListing(body: ListingCreateIn): Promise<Listing> {
-  return apiFetch<Listing>('/listings', {
-=======
-export function createListing(body: ListingInput): Promise<CreatedListing> {
+export function createListing(body: ListingCreateIn): Promise<CreatedListing> {
   return apiFetch<CreatedListing>('/listings', {
->>>>>>> e13a31ac52a5c304b2188da547b6a3859c0dc118
     method: 'POST',
     body: JSON.stringify(body),
   })

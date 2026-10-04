@@ -34,7 +34,7 @@ export default function BrowsePage() {
         </a>
         <div className="home-account">
           <img src="/images/member-avatar.jpg" alt="Your profile avatar" />
-          <button type="button" onClick={() => auth.signOut().then(() => window.location.assign('/login')).catch(() => setError('Could not sign out.'))}>Sign out</button>
+          <button type="button" onClick={() => auth.signOut().then(() => window.location.assign('/login')).catch(() => undefined)}>Sign out</button>
         </div>
       </nav>
       <a className="browse-back browse-back-top" href="/home">← Back to home</a>
