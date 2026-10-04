@@ -116,6 +116,7 @@ export default function AddDetailsPage() {
     }
     setPasswordError('')
     setSubmitted(true)
+    window.location.assign('/create-listing')
   }
 
   return (
