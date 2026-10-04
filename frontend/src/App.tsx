@@ -6,6 +6,7 @@ import LoginPage from './pages/LoginPage'
 import { auth } from './lib/auth'
 import './pages/LoginPage.css'
 import './home.css'
+import HomeBoard from './pages/HomeBoard'
 
 function App() {
   // Start at member access; keep the community feed available at /home.
@@ -46,7 +47,7 @@ function FeedPage() {
           }}>Sign out</button>
         </div>
       </nav>
-
+      <HomeBoard />
     </main>
   )
 }
