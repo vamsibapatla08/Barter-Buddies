@@ -170,7 +170,7 @@ export default function AddDetailsPage() {
         </div>
       </div>
       <div className="login-wrap details-wrap">
-        <a className="login-brand details-brand" href="/">
+        <a className="login-brand details-brand" href="/home">
           <i className="login-thread-pin" aria-hidden="true" />
           Barter Buddies
           <span>Skills shared. Possibilities opened.</span>
@@ -300,7 +300,7 @@ export default function AddDetailsPage() {
         </section>
         <footer className="login-footer">
           <span>The briefing room</span>
-          <a href="/">Back to the community</a>
+          <a href="/home">Back to the community</a>
         </footer>
       </div>
     </main>

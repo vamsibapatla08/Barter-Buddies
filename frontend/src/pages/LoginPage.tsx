@@ -161,7 +161,7 @@ export default function LoginPage() {
         </div>
       </div>
       <div className="login-wrap">
-        <a className="login-brand" href="/"><i className="login-thread-pin" aria-hidden="true" />Barter Buddies<span>Skills shared. Possibilities opened.</span></a>
+        <a className="login-brand" href="/home"><i className="login-thread-pin" aria-hidden="true" />Barter Buddies<span>Skills shared. Possibilities opened.</span></a>
       <section className="login-panel" aria-labelledby="login-heading">
         <img className="login-map-fragment" src="/images/briefing-map.svg" alt="" aria-hidden="true" width="340" height="460" draggable={false} />
           <header className="login-header">
@@ -172,7 +172,7 @@ export default function LoginPage() {
           {signedIn ? (
             <div className="login-success">
               <p role="status">You’re signed in. Your next exchange awaits.</p>
-              <a className="login-submit" href="/">Continue to listings</a>
+              <a className="login-submit" href="/home">Continue to listings</a>
             </div>
           ) : (
             <form noValidate onSubmit={handleSubmit} aria-busy={pending}>
@@ -215,7 +215,7 @@ export default function LoginPage() {
             {notice && <p className="login-notice">{notice}</p>}
           </div>
         </section>
-        <footer className="login-footer"><span>The briefing room</span><a href="/">Back to the community</a></footer>
+        <footer className="login-footer"><span>The briefing room</span><a href="/home">Back to the community</a></footer>
       </div>
     </main>
   )

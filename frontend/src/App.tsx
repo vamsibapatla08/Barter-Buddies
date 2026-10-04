@@ -6,12 +6,13 @@ import CreateListingPage from './pages/CreateListingPage'
 import LoginPage from './pages/LoginPage'
 
 function App() {
-  // Small route boundary until the application adopts a router.
+  // Start at member access; keep the community feed available at /home.
   const path = window.location.pathname.replace(/\/$/, '')
-  if (path === '/login') return <LoginPage />
+  if (!path || path === '/login') return <LoginPage />
+  if (path === '/home') return <FeedPage />
   if (path === '/add-details') return <AddDetailsPage />
   if (path === '/create-listing') return <CreateListingPage />
-  return <FeedPage />
+  return <LoginPage />
 }
 
 function FeedPage() {
@@ -27,7 +28,7 @@ function FeedPage() {
   return (
     <main className="app-shell">
       <nav className="nav">
-        <a className="brand" href="/">
+        <a className="brand" href="/home">
           Barter Buddies
         </a>
         <a className="button button-secondary" href="/login">

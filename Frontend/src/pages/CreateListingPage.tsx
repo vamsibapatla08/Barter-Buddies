@@ -70,7 +70,7 @@ export default function CreateListingPage() {
         <div className="login-board-note login-board-note-right"><i className="login-thread-pin" /><span>A simple agreement</span><p>Your know-how.<br />Their next step.</p><small>That’s a fair exchange.</small></div>
       </div>
       <div className="login-wrap listing-wrap">
-        <a className="login-brand listing-brand" href="/"><i className="login-thread-pin" aria-hidden="true" />Barter Buddies<span>Skills shared. Possibilities opened.</span></a>
+        <a className="login-brand listing-brand" href="/home"><i className="login-thread-pin" aria-hidden="true" />Barter Buddies<span>Skills shared. Possibilities opened.</span></a>
         <img className="login-map-fragment listing-map" src="/images/briefing-map.svg" alt="" aria-hidden="true" />
         <section className="login-panel listing-panel" aria-labelledby="listing-heading" onScroll={event => {
           const offset = Math.min(event.currentTarget.scrollTop * 0.12, 48)
@@ -109,11 +109,11 @@ export default function CreateListingPage() {
             <div className="listing-actions">
               <a className="listing-skip listing-back" href="/add-details" aria-label="Go back to add your details">← Back</a>
               <button className="details-submit listing-publish" type="submit">Publish</button>
-              <a className="listing-skip" href="/" aria-label="Go to the home page">Home</a>
+              <a className="listing-skip" href="/home" aria-label="Go to the home page">Home</a>
             </div>
           </form>
         </section>
-        <footer className="login-footer"><span>The briefing room</span><a href="/">Back to the community</a></footer>
+        <footer className="login-footer"><span>The briefing room</span><a href="/home">Back to the community</a></footer>
       </div>
     </main>
   )
