@@ -4,12 +4,21 @@ export type PersonRef = {
   file_code?: string | null
 }
 
+/** One row of GET /feed. Shape comes from backend/app/routers/feed.py. */
 export type Listing = {
   id: string
   title: string
-  description: string
+  detail: string | null
+  /** Legacy alias of `detail`, still selected by /feed for the older pages. */
+  description: string | null
+  skill_id: string
+  skill_label: string
   category: string
-  owner?: PersonRef
+  meet_spot: string | null
+  mode: string | null
+  available_when: string | null
+  created_at: string
+  owner: PersonRef
 }
 
 export type Match = {
@@ -18,8 +27,10 @@ export type Match = {
   file_code?: string | null
   score: number
   mutual: boolean
-  they_give: SkillRef
-  you_give: SkillRef
+  /** Null on a one-way match. */
+  they_give?: SkillRef | null
+  /** Null on a one-way match. */
+  you_give?: SkillRef | null
   breakdown: Breakdown
 }
 

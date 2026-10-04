@@ -16,7 +16,7 @@ def current_user(credentials: HTTPAuthorizationCredentials | None = Depends(bear
     if not secret:
         raise HTTPException(status_code=500, detail="Authentication is not configured")
     try:
-        payload = jwt.decode(credentials.credentials, secret, algorithms=["HS256"], options={"verify_aud": False})
+        payload = jwt.decode(credentials.credentials, secret, algorithms=["HS256"], audience="authenticated")
         user_id = payload.get("sub")
         if not user_id:
             raise ValueError("JWT subject is missing")
