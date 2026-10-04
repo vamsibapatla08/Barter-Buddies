@@ -368,7 +368,32 @@ before insert on auth.users
 for each row
 execute function public.check_utsa_email();
 
+create trigger check_utsa_email_before_signup
+before insert on auth.users
+for each row
+execute function public.check_utsa_email();
+
 -- Edges
+-- Create a profile row for every new signup
+create or replace function public.create_profile_on_signup()
+returns trigger
+language plpgsql
+security definer
+set search_path = ''
+as $$
+begin
+  insert into public.profiles (id, display_name)
+  values (new.id, split_part(new.email, '@', 1))
+  on conflict (id) do nothing;
+  return new;
+end;
+$$;
+
+drop trigger if exists create_profile_after_signup on auth.users;
+create trigger create_profile_after_signup
+after insert on auth.users
+for each row execute function public.create_profile_on_signup();
+
 create or replace view public.edges as
 select
     l.owner_id as giver_id,
