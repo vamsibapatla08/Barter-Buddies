@@ -107,8 +107,9 @@ export default function CreateListingPage() {
               <label><input type="checkbox" required /> Confirmed the barter details.</label>
             </fieldset>
             <div className="listing-actions">
+              <a className="listing-skip listing-back" href="/add-details" aria-label="Go back to add your details">← Back</a>
               <button className="details-submit listing-publish" type="submit">Publish</button>
-              <a className="listing-skip" href="/" aria-label="Skip creating a listing and return to the community">Skip</a>
+              <a className="listing-skip" href="/" aria-label="Go to the home page">Home</a>
             </div>
           </form>
         </section>
