@@ -1,6 +1,6 @@
 import { useLayoutEffect, useRef, useState } from 'react'
 import type { FormEvent } from 'react'
-import { auth } from '../lib/auth'
+import { auth, isUtsaEmail } from '../lib/auth'
 import './LoginPage.css'
 
 const messages = {
@@ -77,7 +77,9 @@ export default function LoginPage() {
   const emailError = !email.trim()
     ? 'Enter your email address.'
     : !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())
-      ? 'Enter a valid email address.' : ''
+      ? 'Enter a valid email address.'
+      : !isUtsaEmail(email)
+        ? 'Use your @my.utsa.edu email address.' : ''
   const passwordError = password ? '' : 'Enter your password.'
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
@@ -178,7 +180,7 @@ export default function LoginPage() {
               <div className="login-field">
                 <label htmlFor="login-email">Email</label>
                 <input ref={emailInput} id="login-email" name="email" type="email" autoComplete="username" autoCapitalize="none" spellCheck={false} required
-                  value={email} disabled={pending} placeholder="you@example.com"
+                  value={email} disabled={pending} placeholder="name@my.utsa.edu"
                   onChange={event => { setEmail(event.target.value); setError('') }}
                   onBlur={() => setTouched(current => ({ ...current, email: true }))}
                   aria-invalid={touched.email && Boolean(emailError)}

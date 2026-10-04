@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { getMyExchanges, respondToExchange } from '../lib/api'
 import type { ExchangeSummary, LedgerOut, RespondAction } from '../types'
 import { auth } from '../lib/auth'
@@ -20,11 +20,62 @@ type LedgerState =
   | { status: 'ready'; ledger: LedgerOut }
 
 export default function BarterRequestsPage() {
+  const board = useRef<HTMLElement>(null)
+  const [threads, setThreads] = useState<string[]>([])
   const [state, setState] = useState<LedgerState>({ status: 'loading' })
   const [attempt, setAttempt] = useState(0)
   const [busy, setBusy] = useState<Record<string, boolean>>({})
   const [rowError, setRowError] = useState<Record<string, string>>({})
   const [signOutError, setSignOutError] = useState('')
+
+  useLayoutEffect(() => {
+    const root = board.current
+    if (!root) return
+    const update = () => {
+      const origin = root.getBoundingClientRect()
+      const pinPosition = (selector: string) => {
+        const pin = root.querySelector<HTMLElement>(selector)
+        if (!pin?.getClientRects().length) return null
+        const rect = pin.getBoundingClientRect()
+        return {
+          x: rect.left + rect.width / 2 - origin.left + root.scrollLeft,
+          y: rect.top + rect.height / 2 - origin.top + root.scrollTop,
+        }
+      }
+      const top = pinPosition('.login-brand .login-thread-pin')
+      const left = pinPosition('.login-board-note-left .login-thread-pin')
+      const right = pinPosition('.login-board-note-right .login-thread-pin')
+      const ticket = pinPosition('.login-exchange-ticket .login-thread-pin')
+      const wanted = pinPosition('.login-wanted-note .login-thread-pin')
+      if (!top || !left || !right) {
+        setThreads([])
+        return
+      }
+      const connections = [[top, left], [top, right]]
+      if (ticket) connections.push([left, ticket])
+      if (wanted) connections.push([right, wanted])
+      setThreads(connections.map(([start, end]) => {
+        const dx = end.x - start.x
+        const dy = end.y - start.y
+        const length = Math.hypot(dx, dy)
+        const inset = 5.5 / length
+        const startX = start.x + dx * inset
+        const startY = start.y + dy * inset
+        const endX = end.x - dx * inset
+        const endY = end.y - dy * inset
+        return `M ${startX} ${startY} Q ${(startX + endX) / 2} ${(startY + endY) / 2 + 2} ${endX} ${endY}`
+      }))
+    }
+    const observer = new ResizeObserver(update)
+    observer.observe(root)
+    root.querySelectorAll('.home-nav, .login-brand, .login-board-note, .login-exchange-ticket, .login-wanted-note').forEach(node => observer.observe(node))
+    window.addEventListener('resize', update)
+    update()
+    return () => {
+      observer.disconnect()
+      window.removeEventListener('resize', update)
+    }
+  }, [])
 
   const reload = useCallback(() => setAttempt(value => value + 1), [])
 
@@ -92,7 +143,7 @@ export default function BarterRequestsPage() {
         {items.length ? (
           <div className="request-list">{items.map(item => card(item, incoming))}</div>
         ) : (
-          <p className={`request-empty${title === 'Needs your answer' || title === 'Closed' ? ' request-empty-card' : ''}`}>{note}</p>
+          <p className={`request-empty${title === 'Needs your answer' || title === 'You proposed' || title === 'Closed' ? ' request-empty-card' : ''}`}>{note}</p>
         )}
       </section>
     )
@@ -101,10 +152,54 @@ export default function BarterRequestsPage() {
   const ledger = state.status === 'ready' ? state.ledger : null
 
   return (
-    <main className="home-page requests-page">
+    <main className="home-page requests-page" ref={board}>
+      <svg className="login-thread-overlay" aria-hidden="true" focusable="false">
+        {threads.map((path, index) => (
+          <g key={index}>
+            <path className="login-thread-edge" d={path} />
+            <path className="login-thread-core" d={path} />
+            <path className="login-thread-fiber" d={path} />
+          </g>
+        ))}
+      </svg>
       <div className="login-board-notes" aria-hidden="true">
+        <div className="login-filmstrip">
+          <div className="login-film-frame"><img src="/images/doorway-contact.png" alt="" width="240" height="145" draggable={false} /></div>
+          <div className="login-film-detail"><img src="/images/doorway-contact.png" alt="" width="100" height="145" draggable={false} /></div>
+          <span className="login-film-reference">35 MM · CONTACT 01</span>
+          <i className="login-film-clip" />
+        </div>
         <img className="login-magnifier login-magnifier-left" src="/images/magnifying-glass.svg" alt="" width="160" height="205" draggable={false} />
         <img className="login-magnifier login-magnifier-right" src="/images/magnifying-glass.svg" alt="" width="160" height="205" draggable={false} />
+        <div className="login-wanted-note">
+          <i className="login-thread-pin" />
+          <span className="login-wanted-kicker">Most</span>
+          <h2>Wanted</h2>
+          <p>Skills worth exchanging</p>
+          <ul>
+            <li>Math tutoring</li>
+            <li>Bicycle repairs</li>
+            <li>Guitar lessons</li>
+            <li>Resume help</li>
+          </ul>
+          <small>Make your offer</small>
+        </div>
+        <div className="login-exchange-ticket">
+          <img src="/images/exchange-ticket.svg" alt="" width="290" height="226" draggable={false} />
+          <i className="login-thread-pin" />
+        </div>
+        <div className="login-board-note login-board-note-left">
+          <i className="login-thread-pin" />
+          <span>The exchange board</span>
+          <p>Good at something?<br />Someone here<br />could use your help.</p>
+          <small>Share a skill. Learn another.</small>
+        </div>
+        <div className="login-board-note login-board-note-right">
+          <i className="login-thread-pin" />
+          <span>A simple agreement</span>
+          <p>Your know-how.<br />Their next step.</p>
+          <small>That’s a fair exchange.</small>
+        </div>
       </div>
       <nav className="home-nav">
         <a className="login-brand home-brand" href="/home">
@@ -124,6 +219,9 @@ export default function BarterRequestsPage() {
           </div>
         </div>
       </nav>
+      <div className="requests-decoration-wrap" aria-hidden="true">
+        <img className="login-map-fragment" src="/images/briefing-map.svg" alt="" width="340" height="460" draggable={false} />
+      </div>
       <a className="requests-back" href="/home">← Back to home</a>
 
       <section className="requests-content" aria-label="Your barter requests">

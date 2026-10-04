@@ -9,6 +9,10 @@ export type SignUpResult =
   | { ok: true; userId: string }
   | { ok: false; reason: 'unavailable' | 'credentials' | 'network' | 'server' }
 
+export function isUtsaEmail(email: string): boolean {
+  return /^[^\s@]+@my\.utsa\.edu$/i.test(email.trim())
+}
+
 // CONTRACT.md specifies browser-to-Supabase login. Replace this adapter if that
 // contract changes; the UI only consumes this result and never receives tokens.
 // Supabase manages the session. Never persist or log the submitted password.
@@ -16,6 +20,7 @@ export const auth = {
   isConfigured: Boolean(supabase),
   async signIn(credentials: SignInRequest): Promise<SignInResult> {
     if (!supabase) return { ok: false, reason: 'unavailable' }
+    if (!isUtsaEmail(credentials.email)) return { ok: false, reason: 'credentials' }
     try {
       const { data, error } = await supabase.auth.signInWithPassword(credentials)
       if (error) {
@@ -31,6 +36,7 @@ export const auth = {
   },
   async signUp(credentials: SignUpRequest): Promise<SignUpResult> {
     if (!supabase) return { ok: false, reason: 'unavailable' }
+    if (!isUtsaEmail(credentials.email)) return { ok: false, reason: 'credentials' }
     try {
       const { data, error } = await supabase.auth.signUp(credentials)
       if (error) {

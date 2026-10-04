@@ -4,6 +4,18 @@
   width: min(720px, 100%);
   margin: 90px auto 40px;
 }
+.requests-decoration-wrap {
+  position: absolute;
+  z-index: 0;
+  top: 0;
+  left: 50%;
+  width: min(100%, 520px);
+  height: 0;
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+.requests-decoration-wrap .login-map-fragment { z-index: 0; }
+.requests-page .login-thread-overlay { z-index: 5; }
 
 .requests-back {
   position: absolute;
@@ -30,8 +42,8 @@
 }
 
 .requests-header { margin: 0 0 26px; text-align: left; }
-.requests-kicker { display: block; color: #7a263a; font: 700 clamp(26px, 4.7vw, 50px)/1.05 Georgia, serif; letter-spacing: .02em; text-align: center; text-transform: uppercase; }
-.requests-header h1 { margin: 12px 0; font: 400 clamp(21px, 3vw, 36px)/1.15 Georgia, serif; color: #1e1e1c; }
+.requests-kicker { display: block; color: #1e1e1c; font: 700 24px/1.15 Georgia, serif; letter-spacing: .02em; text-align: center; text-transform: uppercase; }
+.requests-header h1 { margin: 12px 0; font: 700 24px/1.15 Georgia, serif; color: #1e1e1c; }
 .requests-header p { margin: 0; color: #6b6253; }
 .requests-header-copy {
   position: relative;
@@ -60,7 +72,7 @@
 .request-group-heading {
   margin: 0 0 14px;
   color: #1e1e1c;
-  font: 400 24px Georgia, serif;
+  font: 700 24px Georgia, serif;
 }
 .request-group-heading small {
   margin-left: 8px;

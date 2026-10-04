@@ -1,4 +1,4 @@
-import { auth } from '../lib/auth'
+import { auth, isUtsaEmail } from '../lib/auth'
 import { useLayoutEffect, useRef, useState } from 'react'
 import type { FormEvent } from 'react'
 import './LoginPage.css'
@@ -45,6 +45,7 @@ export default function AddDetailsPage() {
   const board = useRef<HTMLElement>(null)
   const [threads, setThreads] = useState<string[]>([])
   const [submitted, setSubmitted] = useState(false)
+  const [emailError, setEmailError] = useState('')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
   const [passwordError, setPasswordError] = useState('')
@@ -111,12 +112,17 @@ export default function AddDetailsPage() {
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
+    const form = new FormData(event.currentTarget)
+    const email = String(form.get('email') ?? '').trim()
+    if (!isUtsaEmail(email)) {
+      setEmailError('Use your @my.utsa.edu email address.')
+      return
+    }
+    setEmailError('')
     if (password !== confirmPassword) {
       setPasswordError('Passwords do not match.')
       return
     }
-    const form = new FormData(event.currentTarget)
-    const email = String(form.get('email') ?? '').trim()
     setPasswordError('')
     const result = await auth.signUp({ email, password })
     if (!result.ok) {
@@ -258,7 +264,10 @@ export default function AddDetailsPage() {
               </div>
               <div className="login-field details-field">
                 <label htmlFor="details-email">Email address</label>
-                <input id="details-email" name="email" type="email" autoComplete="email" required />
+                <input id="details-email" name="email" type="email" autoComplete="email" placeholder="name@my.utsa.edu" required
+                  aria-invalid={Boolean(emailError)} aria-describedby={emailError ? 'details-email-error' : undefined}
+                  onChange={() => setEmailError('')} />
+                {emailError && <p className="login-field-error" id="details-email-error">{emailError}</p>}
               </div>
               <div className="login-field details-field">
                 <label htmlFor="details-password">Create a new password</label>
