@@ -19,4 +19,14 @@ The API listens on `http://localhost:8000`; interactive docs are at `/docs`. It 
 
 Set `VITE_API_URL`, `VITE_SUPABASE_URL`, and `VITE_SUPABASE_ANON_KEY` for the Vite app, then run `npm install` and `npm run dev` from `frontend/`.
 
+Do not open `frontend/index.html` with VS Code Live Preview. It is a Vite entry point whose
+`/src/main.tsx` module must be transformed before the browser can load it. Start Vite from
+the `frontend/` directory and open the URL it prints (normally `http://localhost:5173`):
+
+```powershell
+cd frontend
+npm install
+npm run dev
+```
+
 See [`CONTRACT.md`](CONTRACT.md) for API request and response shapes.

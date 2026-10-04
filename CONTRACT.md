@@ -11,8 +11,14 @@ Vamsi's endpoints don't have models yet, so their shapes in the table are still 
 | Method | Path | Owner | Request body | Returns | Notes |
 |---|---|---|---|---|---|
 | GET | `/feed?category=` | Vamsi | — | `200` list of listings | `category` is optional; omit it for all categories. |
+<<<<<<< HEAD
+| GET | `/skills` | Vamsi | — | `200` list of skills | Requires authentication; returns the selectable skill IDs, labels, and categories. |
+| GET | `/listings/{id}` | Vamsi | — | `200` one listing | `404` if the listing doesn't exist. |
+| POST | `/listings` | Vamsi | `{ title, description, category }` | `201` the created listing | Owner is taken from the JWT, not the body. |
+=======
 | GET | `/listings/{id}` | Vamsi | — | `200` `ListingOut` | `404` if the listing doesn't exist. Carries `meet_spot`, `mode` and `available_when`. |
 | POST | `/listings` | Vamsi | `ListingIn` | `201` `ListingOut` | Owner is taken from the JWT, not the body. `meet_spot`, `mode` and `available_when` are optional; `mode` must be exactly `"in_person"` or `"online"`. `400` if `category` isn't a known skill id. |
+>>>>>>> e13a31ac52a5c304b2188da547b6a3859c0dc118
 | POST | `/wants` | Vamsi | `{ title, description, category }` | `201` the created want | Owner is taken from the JWT. Wants feed into matching. |
 | GET | `/me` | Vamsi | — | `200` my profile, rank, stats | The profile of whoever the JWT belongs to. |
 | GET | `/profiles/{id}` | Vamsi | — | `200` profile with reviews | `404` if the user doesn't exist. |
@@ -100,6 +106,15 @@ Any `mode` other than `"in_person"` or `"online"` is a `422`.
 
 ### Responses
 
+<<<<<<< HEAD
+**`Skill`**: one selectable skill from `GET /skills`
+
+```
+{
+  id:       string
+  label:    string
+  category: string
+=======
 **`ListingOut`**: one listing, returned by `POST /listings` and `GET /listings/{id}`
 
 ```
@@ -113,6 +128,7 @@ Any `mode` other than `"in_person"` or `"online"` is a `422`.
   mode?:           string | null        // "in_person" or "online"
   available_when?: string | null
   owner?:          PersonRef            // included by GET /listings/{id}
+>>>>>>> e13a31ac52a5c304b2188da547b6a3859c0dc118
 }
 ```
 

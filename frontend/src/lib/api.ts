@@ -15,8 +15,13 @@ const API_URL = import.meta.env.VITE_API_URL
 export const SUPABASE_NOT_CONFIGURED =
   'Supabase is not configured. Check VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY.'
 export const NOT_SIGNED_IN = 'You are not signed in. Please sign in again.'
+export const TIMED_OUT = 'The server took too long to respond. Check the Railway logs.'
 
-export async function apiFetch<T>(path: string, options: RequestInit = {}): Promise<T> {
+export async function apiFetch<T>(
+  path: string,
+  options: RequestInit = {},
+  timeoutMs = 20000,
+): Promise<T> {
   if (!supabase) {
     throw new Error(SUPABASE_NOT_CONFIGURED)
   }
@@ -29,15 +34,30 @@ export async function apiFetch<T>(path: string, options: RequestInit = {}): Prom
     throw new Error(NOT_SIGNED_IN)
   }
 
-  const response = await fetch(`${API_URL}${path}`, {
-    ...options,
-    headers: {
-      'Content-Type': 'application/json',
-      ...options.headers,
-      // Spread last so options.headers can never clobber the token.
-      Authorization: `Bearer ${session.access_token}`,
-    },
-  })
+  const controller = new AbortController()
+  const timer = setTimeout(() => controller.abort(), timeoutMs)
+
+  let response: Response
+  try {
+    response = await fetch(`${API_URL}${path}`, {
+      ...options,
+      signal: controller.signal,
+      headers: {
+        'Content-Type': 'application/json',
+        ...options.headers,
+        // Spread last so options.headers can never clobber the token.
+        Authorization: `Bearer ${session.access_token}`,
+      },
+    })
+  } catch (err) {
+    if (err instanceof DOMException && err.name === 'AbortError') {
+      console.error(`API timeout after ${timeoutMs}ms on ${path}`)
+      throw new Error(TIMED_OUT)
+    }
+    throw err
+  } finally {
+    clearTimeout(timer)
+  }
 
   if (!response.ok) {
     throw new Error(await errorMessage(path, response))
@@ -93,7 +113,8 @@ export function proposeExchange(body: ProposeInput): Promise<ExchangeOut> {
 }
 
 export function getSkills(): Promise<Skill[]> {
-  return apiFetch<Skill[]>('/skills').catch(async apiError => {
+  // Short timeout: if Railway is slow, fall back to Supabase instead of hanging.
+  return apiFetch<Skill[]>('/skills', {}, 5000).catch(async apiError => {
     if (!supabase) throw apiError
 
     const { data, error } = await supabase

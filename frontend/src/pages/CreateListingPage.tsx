@@ -2,6 +2,7 @@ import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import type { FormEvent } from 'react'
 import { createListing, getSkills } from '../lib/api'
 import { SPOTS, TIME_OPTIONS, dateOptions } from '../lib/schedule'
+import { SKILLS } from '../lib/skills'
 import type { ListingMode, Skill } from '../types'
 import './LoginPage.css'
 import './CreateListingPage.css'
@@ -30,9 +31,13 @@ export default function CreateListingPage() {
   const online = mode === 'online'
 
   useEffect(() => {
+    // Live ids from the database; the bundled list is the offline fallback.
     getSkills()
       .then(setSkills)
-      .catch((error: Error) => setSkillsError(error.message || 'Could not load the skill list.'))
+      .catch((error: Error) => {
+        setSkills(SKILLS)
+        setSkillsError(error.message || 'Could not load the skill list.')
+      })
   }, [])
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
@@ -170,7 +175,6 @@ export default function CreateListingPage() {
                 {skills.map(skill => <option key={skill.id} value={skill.id}>{skill.label}</option>)}
               </select>
             </fieldset>
-            {skillsError && <p role="alert" className="listing-skill-error">{skillsError}</p>}
             <fieldset className="listing-box listing-coordinates">
               <legend>Coordinates</legend>
               <div>

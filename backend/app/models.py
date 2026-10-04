@@ -30,6 +30,12 @@ class ListingOut(ListingIn):
     owner: PersonRef | None = None
 
 
+class SkillOut(BaseModel):
+    id: str
+    label: str
+    category: str
+
+
 class ProfilePatch(BaseModel):
     name: str | None = Field(default=None, min_length=1, max_length=120)
     file_code: str | None = Field(default=None, max_length=32)
