@@ -31,8 +31,8 @@ def create_review(body: ReviewIn, user_id: str = Depends(current_user)):
         review = cur.fetchone()
         if review is None:
             raise HTTPException(status_code=409, detail="You have already reviewed this exchange")
-        cur.execute("UPDATE profiles SET rating = (SELECT avg(stars)::float FROM reviews WHERE reviewee_id = %s), review_count = (SELECT count(*) FROM reviews WHERE reviewee_id = %s) WHERE id = %s", (reviewee_id, reviewee_id, reviewee_id))
-        cur.execute("SELECT id, name, file_code FROM profiles WHERE id = %s", (user_id,))
+        cur.execute("UPDATE profiles SET rating_avg = (SELECT round(avg(stars), 2) FROM reviews WHERE reviewee_id = %s) WHERE id = %s", (reviewee_id, reviewee_id))
+        cur.execute("SELECT id, display_name AS name, file_code FROM profiles WHERE id = %s", (user_id,))
         reviewer = cur.fetchone()
         review["reviewer"] = {"id": str(reviewer["id"]), "name": reviewer["name"], "file_code": reviewer["file_code"]}
         review["id"] = str(review["id"])

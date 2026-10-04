@@ -4,26 +4,36 @@ from app.auth import current_user
 from app.db import connection
 from app.exchange_states import can_transition
 from app.models import ExchangeIn, RespondIn
-from psycopg.types.json import Jsonb
 
 router = APIRouter(prefix="/exchanges", tags=["exchanges"])
 
-_DETAIL_SQL = """SELECT e.id, e.status, e.created_at, e.source, e.terms, e.locked_at,
-                         e.requester_completed, e.recipient_completed, e.thread_id,
-                         requester.id AS requester_id, requester.name AS requester_name,
+# requester_gives / recipient_gives are not stored; they are the two listings' titles.
+_DETAIL_SQL = """SELECT e.id, e.status, e.created_at, e.source, e.locked_at,
+                         e.terms_when, e.terms_where, e.terms_mode, e.note,
+                         requester_listing.title AS requester_gives,
+                         recipient_listing.title AS recipient_gives,
+                         e.requester_completed, e.recipient_completed, t.id AS thread_id,
+                         requester.id AS requester_id, requester.display_name AS requester_name,
                          requester.file_code AS requester_file_code,
-                         recipient.id AS recipient_id, recipient.name AS recipient_name,
+                         recipient.id AS recipient_id, recipient.display_name AS recipient_name,
                          recipient.file_code AS recipient_file_code
                   FROM exchanges e
                   JOIN profiles requester ON requester.id = e.requester_id
                   JOIN profiles recipient ON recipient.id = e.recipient_id
+                  JOIN listings requester_listing ON requester_listing.id = e.requester_listing_id
+                  JOIN listings recipient_listing ON recipient_listing.id = e.recipient_listing_id
+                  LEFT JOIN threads t ON t.exchange_id = e.id
                   WHERE e.id = %s"""
 
 
 def _shape(row):
     return {
         "id": str(row["id"]), "status": row["status"], "created_at": row["created_at"],
-        "source": row["source"], "terms": row["terms"], "locked_at": row["locked_at"],
+        "source": row["source"], "locked_at": row["locked_at"],
+        "terms": {
+            "requester_gives": row["requester_gives"], "recipient_gives": row["recipient_gives"],
+            "when": row["terms_when"], "where": row["terms_where"], "mode": row["terms_mode"], "note": row["note"],
+        },
         "requester_completed": row["requester_completed"], "recipient_completed": row["recipient_completed"],
         "thread_id": str(row["thread_id"]) if row["thread_id"] else None,
         "requester": {"id": str(row["requester_id"]), "name": row["requester_name"], "file_code": row["requester_file_code"]},
@@ -43,20 +53,23 @@ def propose(body: ExchangeIn, user_id: str = Depends(current_user)):
         raise HTTPException(status_code=400, detail="You cannot propose an exchange to yourself")
     if body.source not in ("browse", "match"):
         raise HTTPException(status_code=400, detail="source must be 'browse' or 'match'")
+    if body.terms.mode not in ("in_person", "online"):
+        raise HTTPException(status_code=400, detail="terms.mode must be 'in_person' or 'online'")
     with connection() as conn, conn.cursor() as cur:
-        cur.execute("SELECT owner_id, kind FROM listings WHERE id = %s AND is_active = TRUE", (body.requester_listing_id,))
+        cur.execute("SELECT owner_id FROM listings WHERE id = %s AND active = TRUE", (body.requester_listing_id,))
         requester_listing = cur.fetchone()
-        cur.execute("SELECT owner_id, kind FROM listings WHERE id = %s AND is_active = TRUE", (body.recipient_listing_id,))
+        cur.execute("SELECT owner_id FROM listings WHERE id = %s AND active = TRUE", (body.recipient_listing_id,))
         recipient_listing = cur.fetchone()
-        if not requester_listing or str(requester_listing["owner_id"]) != user_id or requester_listing["kind"] != "offer":
+        if not requester_listing or str(requester_listing["owner_id"]) != user_id:
             raise HTTPException(status_code=400, detail="requester_listing_id must be your active offer")
-        if not recipient_listing or str(recipient_listing["owner_id"]) != body.recipient_id or recipient_listing["kind"] != "offer":
+        if not recipient_listing or str(recipient_listing["owner_id"]) != body.recipient_id:
             raise HTTPException(status_code=400, detail="recipient_listing_id must be the recipient's active offer")
         cur.execute(
-            """INSERT INTO exchanges (requester_id, recipient_id, requester_listing_id,
-                                      recipient_listing_id, terms, source, status)
-               VALUES (%s, %s, %s, %s, %s, %s, 'proposed') RETURNING id""",
-            (user_id, body.recipient_id, body.requester_listing_id, body.recipient_listing_id, Jsonb(body.terms.model_dump()), body.source),
+            """INSERT INTO exchanges (requester_id, recipient_id, requester_listing_id, recipient_listing_id,
+                                      terms_when, terms_where, terms_mode, note, source, status)
+               VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, 'proposed') RETURNING id""",
+            (user_id, body.recipient_id, body.requester_listing_id, body.recipient_listing_id,
+             body.terms.when, body.terms.where, body.terms.mode, body.terms.note, body.source),
         )
         exchange_id = cur.fetchone()["id"]
         return _get_exchange(cur, exchange_id)
@@ -68,12 +81,15 @@ def mine(user_id: str = Depends(current_user)):
     with connection() as conn, conn.cursor() as cur:
         cur.execute(
             """SELECT e.id, e.status, e.created_at, e.requester_id, e.recipient_id,
-                      e.terms, requester.id AS requester_profile_id, requester.name AS requester_name,
+                      requester_listing.title AS requester_gives, recipient_listing.title AS recipient_gives,
+                      requester.id AS requester_profile_id, requester.display_name AS requester_name,
                       requester.file_code AS requester_file_code, recipient.id AS recipient_profile_id,
-                      recipient.name AS recipient_name, recipient.file_code AS recipient_file_code
+                      recipient.display_name AS recipient_name, recipient.file_code AS recipient_file_code
                FROM exchanges e
                JOIN profiles requester ON requester.id = e.requester_id
                JOIN profiles recipient ON recipient.id = e.recipient_id
+               JOIN listings requester_listing ON requester_listing.id = e.requester_listing_id
+               JOIN listings recipient_listing ON recipient_listing.id = e.recipient_listing_id
                WHERE e.requester_id = %s OR e.recipient_id = %s ORDER BY e.created_at DESC""",
             (user_id, user_id),
         )
@@ -89,7 +105,7 @@ def mine(user_id: str = Depends(current_user)):
                 bucket = "closed"
             other_is_requester = str(row["requester_id"]) != user_id
             person_prefix = "requester" if other_is_requester else "recipient"
-            summary = row["terms"].get("requester_gives" if other_is_requester else "recipient_gives", "Exchange")
+            summary = row["requester_gives" if other_is_requester else "recipient_gives"]
             result[bucket].append({
                 "id": str(row["id"]), "status": row["status"],
                 "other": {"id": str(row[f"{person_prefix}_profile_id"]), "name": row[f"{person_prefix}_name"], "file_code": row[f"{person_prefix}_file_code"]},
@@ -124,7 +140,9 @@ def respond(exchange_id: str, body: RespondIn, user_id: str = Depends(current_us
         if not can_transition(exchange["status"], body.action, is_requester=False):
             raise HTTPException(status_code=409, detail="Exchange is no longer awaiting a response")
         new_status = "accepted" if body.action == "accept" else "declined"
-        cur.execute("UPDATE exchanges SET status = %s, response_reason = %s WHERE id = %s", (new_status, body.reason, exchange_id))
+        cur.execute("UPDATE exchanges SET status = %s WHERE id = %s", (new_status, exchange_id))
+        if new_status == "accepted":
+            cur.execute("INSERT INTO threads (exchange_id) VALUES (%s) ON CONFLICT (exchange_id) DO NOTHING", (exchange_id,))
         return _get_exchange(cur, exchange_id)
 
 

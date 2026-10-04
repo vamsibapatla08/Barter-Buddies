@@ -10,8 +10,9 @@ router = APIRouter(tags=["profiles"])
 def _profile(user_id: str):
     with connection() as conn, conn.cursor() as cur:
         cur.execute(
-            """SELECT p.id, p.name, p.file_code, p.bio, p.location, p.rank,
-                      p.rating, p.review_count,
+            """SELECT p.id, p.display_name AS name, p.file_code, p.bio,
+                      coalesce(p.rating_avg, 0)::float AS rating,
+                      (SELECT count(*) FROM reviews r WHERE r.reviewee_id = p.id) AS review_count,
                       (SELECT count(*) FROM exchanges e
                        WHERE e.status = 'completed' AND (e.requester_id = p.id OR e.recipient_id = p.id)) AS completed_exchanges
                FROM profiles p WHERE p.id = %s""",
@@ -22,7 +23,7 @@ def _profile(user_id: str):
             return None
         cur.execute(
             """SELECT r.id, r.stars, r.note, r.created_at,
-                      jsonb_build_object('id', reviewer.id, 'name', reviewer.name,
+                      jsonb_build_object('id', reviewer.id, 'name', reviewer.display_name,
                                          'file_code', reviewer.file_code) AS reviewer
                FROM reviews r JOIN profiles reviewer ON reviewer.id = r.reviewer_id
                WHERE r.reviewee_id = %s ORDER BY r.created_at DESC LIMIT 20""",
@@ -50,12 +51,13 @@ def get_profile(profile_id: str):
 
 @router.patch("/me")
 def patch_me(body: ProfilePatch, user_id: str = Depends(current_user)):
-    updates = body.model_dump(exclude_unset=True)
+    # Model field -> profiles column. ProfilePatch.location has no column and is ignored.
+    columns = {"name": "display_name", "file_code": "file_code", "bio": "bio"}
+    updates = {columns[key]: value for key, value in body.model_dump(exclude_unset=True).items() if key in columns}
     if not updates:
         return get_me(user_id)
-    columns = {"name", "file_code", "bio", "location"}
-    assignments = ", ".join(f"{key} = %s" for key in updates if key in columns)
-    values = [value for key, value in updates.items() if key in columns]
+    assignments = ", ".join(f"{column} = %s" for column in updates)
+    values = list(updates.values())
     with connection() as conn, conn.cursor() as cur:
         cur.execute(f"UPDATE profiles SET {assignments} WHERE id = %s", (*values, user_id))
     return get_me(user_id)
