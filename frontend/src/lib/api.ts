@@ -1,12 +1,18 @@
+import { supabase } from './supabase'
 import type { Listing, Match } from '../types'
 
 const API_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:8000'
 
 async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
+  const { data } = supabase
+    ? await supabase.auth.getSession()
+    : { data: { session: null } }
+
   const response = await fetch(`${API_URL}${path}`, {
     ...options,
     headers: {
       'Content-Type': 'application/json',
+      Authorization: 'Bearer ' + (data.session?.access_token ?? ''),
       ...options.headers,
     },
   })
