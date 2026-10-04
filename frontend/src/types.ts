@@ -27,6 +27,32 @@ export type Skill = {
   category: string
 }
 
+export type ListingMode = 'in_person' | 'online'
+
+/** Body of POST /listings. Mirrors ListingIn in backend/app/models.py. */
+export type ListingInput = {
+  title: string
+  description: string
+  /** A skill id, e.g. "CALCULUS_TUTORING" — not the human category. */
+  category: string
+  meet_spot: string | null
+  mode: ListingMode
+  /** Date and time in one string, e.g. "Thu 9 Oct, 6:00 PM". */
+  available_when: string
+}
+
+/** Response of POST /listings. Its `category` is the skill's category. */
+export type CreatedListing = {
+  id: string
+  title: string
+  description: string | null
+  skill_id: string
+  category: string
+  meet_spot: string | null
+  mode: string | null
+  available_when: string | null
+}
+
 export type Match = {
   user_id: string
   name: string
