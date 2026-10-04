@@ -21,9 +21,11 @@ export default function CreateListingPage() {
       const left = pinPosition('.login-board-note-left .login-thread-pin')
       const right = pinPosition('.login-board-note-right .login-thread-pin')
       const ticket = pinPosition('.login-exchange-ticket .login-thread-pin')
+      const wanted = pinPosition('.login-wanted-note .login-thread-pin')
       if (!top || !left || !right) return setThreads([])
       const connections = [[top, left], [top, right]]
       if (ticket) connections.push([left, ticket])
+      if (wanted) connections.push([right, wanted])
       setThreads(connections.map(([start, end]) => {
         const dx = end.x - start.x
         const dy = end.y - start.y
