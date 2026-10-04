@@ -7,6 +7,7 @@ import { auth } from './lib/auth'
 import './pages/LoginPage.css'
 import './home.css'
 import HomeBoard from './pages/HomeBoard'
+import BrowsePage from './pages/BrowsePage'
 
 function App() {
   // Start at member access; keep the community feed available at /home.
@@ -20,6 +21,7 @@ function App() {
 
   if (!path || path === '/login') return <LoginPage />
   if (path === '/home') return <FeedPage />
+  if (path === '/browse') return <BrowsePage />
   if (path === '/add-details') return <AddDetailsPage />
   if (path === '/create-listing') return <CreateListingPage />
   return <LoginPage />
