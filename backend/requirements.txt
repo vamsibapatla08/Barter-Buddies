@@ -2,6 +2,6 @@ fastapi
 uvicorn[standard]
 psycopg[binary,pool]
 pydantic
-pyjwt
+pyjwt[crypto]
 python-dotenv
 pytest

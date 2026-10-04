@@ -11,6 +11,7 @@ Vamsi's endpoints don't have models yet, so their shapes in the table are still 
 | Method | Path | Owner | Request body | Returns | Notes |
 |---|---|---|---|---|---|
 | GET | `/feed?category=` | Vamsi | — | `200` list of listings | `category` is optional; omit it for all categories. |
+| GET | `/skills` | Vamsi | — | `200` list of skills | Requires authentication; returns the selectable skill IDs, labels, and categories. |
 | GET | `/listings/{id}` | Vamsi | — | `200` one listing | `404` if the listing doesn't exist. |
 | POST | `/listings` | Vamsi | `{ title, description, category }` | `201` the created listing | Owner is taken from the JWT, not the body. |
 | POST | `/wants` | Vamsi | `{ title, description, category }` | `201` the created want | Owner is taken from the JWT. Wants feed into matching. |
@@ -77,6 +78,16 @@ These mirror [Backend/app/models.py](Backend/app/models.py). `?` marks an option
 ```
 
 ### Responses
+
+**`Skill`**: one selectable skill from `GET /skills`
+
+```
+{
+  id:       string
+  label:    string
+  category: string
+}
+```
 
 **`ExchangeOut`**: one exchange, full detail
 

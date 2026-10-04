@@ -1,20 +1,14 @@
-import { useEffect, useLayoutEffect, useRef, useState } from 'react'
-import { getSkills } from '../lib/api'
-import type { Skill } from '../types'
+import { useLayoutEffect, useRef, useState } from 'react'
+import { createListing } from '../lib/api'
+import { SKILLS } from '../lib/skills'
 import './LoginPage.css'
 import './CreateListingPage.css'
 
 export default function CreateListingPage() {
   const board = useRef<HTMLElement>(null)
   const [threads, setThreads] = useState<string[]>([])
-  const [skills, setSkills] = useState<Skill[]>([])
-  const [skillsError, setSkillsError] = useState('')
-
-  useEffect(() => {
-    getSkills()
-      .then(setSkills)
-      .catch((error: Error) => setSkillsError(error.message || 'Could not load the skill list.'))
-  }, [])
+  const [submitting, setSubmitting] = useState(false)
+  const [error, setError] = useState('')
 
   useLayoutEffect(() => {
     const root = board.current
@@ -92,7 +86,34 @@ export default function CreateListingPage() {
           </header>
           <form onSubmit={event => {
             event.preventDefault()
-            window.location.assign('/browse')
+            if (submitting) return
+            const form = event.currentTarget
+            const data = new FormData(form)
+            const date = String(data.get('date') || '').trim()
+            const time = String(data.get('time') || '').trim()
+            const mode = data.get('mode')
+            if (mode !== 'in_person' && mode !== 'online') {
+              setError('Please choose a valid meeting mode.')
+              return
+            }
+            setSubmitting(true)
+            setError('')
+            createListing({
+              title: String(data.get('title') || '').trim(),
+              description: String(data.get('description') || '').trim(),
+              category: String(data.get('offer') || ''),
+              meet_spot: String(data.get('place') || '').trim() || null,
+              mode,
+              available_when: date && time ? `${date}, ${time}` : date || time || null,
+            })
+              .then(listing => {
+                localStorage.setItem('myListingId', listing.id)
+                window.location.assign('/home')
+              })
+              .catch((requestError: Error) => {
+                setError(requestError.message || 'Could not publish your listing.')
+              })
+              .finally(() => setSubmitting(false))
           }}>
             <fieldset className="listing-box">
               <legend>Listing</legend>
@@ -100,35 +121,41 @@ export default function CreateListingPage() {
               <input id="listing-title" name="title" type="text" placeholder="What can you teach or help with?" required />
             </fieldset>
             <fieldset className="listing-box">
+              <legend>Description</legend>
+              <label htmlFor="listing-description">Tell the crew about your offer</label>
+              <textarea id="listing-description" name="description" placeholder="Share your experience, format, or session details" required />
+            </fieldset>
+            <fieldset className="listing-box">
               <legend>Offer</legend>
               <label htmlFor="listing-offer">What are you offering?</label>
-              <select id="listing-offer" name="offer" defaultValue="" required disabled={!skills.length}>
-                <option value="" disabled>{skills.length ? 'Select a skill' : 'Loading skills…'}</option>
-                {skills.map(skill => <option key={skill.id} value={skill.id}>{skill.label}</option>)}
+              <select id="listing-offer" name="offer" defaultValue="" required>
+                <option value="" disabled>Select a skill</option>
+                {SKILLS.map(skill => <option key={skill.id} value={skill.id}>{skill.label}</option>)}
               </select>
             </fieldset>
             <fieldset className="listing-box">
               <legend>Counter Ask</legend>
               <label htmlFor="listing-ask">What would make this a fair exchange?</label>
-              <select id="listing-ask" name="ask" defaultValue="" required disabled={!skills.length}>
-                <option value="" disabled>{skills.length ? 'Select a skill needed' : 'Loading skills…'}</option>
-                {skills.map(skill => <option key={skill.id} value={skill.id}>{skill.label}</option>)}
+              <select id="listing-ask" name="ask" defaultValue="" required>
+                <option value="" disabled>Select a skill needed</option>
+                {SKILLS.map(skill => <option key={skill.id} value={skill.id}>{skill.label}</option>)}
               </select>
             </fieldset>
-            {skillsError && <p role="alert" className="listing-skill-error">{skillsError}</p>}
             <fieldset className="listing-box listing-coordinates">
               <legend>Coordinates</legend>
-              <div><label htmlFor="listing-date">Date</label><select id="listing-date" name="date" defaultValue=""><option value="" disabled>Select date</option><option>Today</option><option>Tomorrow</option><option>This weekend</option></select></div>
-              <div><label htmlFor="listing-time">Time</label><select id="listing-time" name="time" defaultValue=""><option value="" disabled>Select time</option><option>Morning</option><option>Afternoon</option><option>Evening</option></select></div>
-              <div><label htmlFor="listing-place">Place</label><input id="listing-place" name="place" type="text" placeholder="Enter a meetup place" required /></div>
+              <div><label htmlFor="listing-date">Date</label><input id="listing-date" name="date" type="text" placeholder="Thu 9 Oct" required /></div>
+              <div><label htmlFor="listing-time">Time</label><input id="listing-time" name="time" type="text" placeholder="6:00 PM" required /></div>
+              <div><label htmlFor="listing-place">Place</label><input id="listing-place" name="place" type="text" placeholder="Enter a meetup place" /></div>
+              <div><label htmlFor="listing-mode">Mode</label><select id="listing-mode" name="mode" defaultValue="" required><option value="" disabled>Select mode</option><option value="in_person">In person</option><option value="online">Online</option></select></div>
             </fieldset>
+            {error && <div className="listing-skill-error" role="alert"><p>{error}</p><button type="submit" disabled={submitting}>{submitting ? 'Posting…' : 'Retry'}</button></div>}
             <fieldset className="listing-box listing-validate">
               <legend>Validate Listing</legend>
               <label><input type="checkbox" required /> Confirmed the barter details.</label>
             </fieldset>
             <div className="listing-actions">
               <a className="listing-skip listing-back" href="/add-details" aria-label="Go back to add your details">← Back</a>
-              <button className="details-submit listing-publish" type="submit">Publish</button>
+              <button className="details-submit listing-publish" type="submit" disabled={submitting}>{submitting ? 'Posting…' : 'Publish'}</button>
               <a className="listing-skip" href="/home" aria-label="Go to the home page">Home</a>
             </div>
           </form>

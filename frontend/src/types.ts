@@ -27,6 +27,15 @@ export type Skill = {
   category: string
 }
 
+export type ListingCreateIn = {
+  title: string
+  description: string
+  category: string
+  meet_spot: string | null
+  mode: 'in_person' | 'online'
+  available_when: string | null
+}
+
 export type Match = {
   user_id: string
   name: string

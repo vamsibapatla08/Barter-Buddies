@@ -13,12 +13,14 @@ def get_settings():
     return Settings(
         database_url=os.getenv("DATABASE_URL", ""),
         supabase_jwt_secret=os.getenv("SUPABASE_JWT_SECRET", ""),
+        supabase_url=os.getenv("SUPABASE_URL", ""),
         allowed_origins=[origin.strip() for origin in os.getenv("ALLOWED_ORIGINS", "http://localhost:5173").split(",") if origin.strip()],
     )
 
 
 class Settings:
-    def __init__(self, database_url: str, supabase_jwt_secret: str, allowed_origins: list[str]):
+    def __init__(self, database_url: str, supabase_jwt_secret: str, allowed_origins: list[str], supabase_url: str = ""):
         self.database_url = database_url
         self.supabase_jwt_secret = supabase_jwt_secret
+        self.supabase_url = supabase_url
         self.allowed_origins = allowed_origins

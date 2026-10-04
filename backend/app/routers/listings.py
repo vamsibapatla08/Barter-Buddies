@@ -2,9 +2,16 @@ from fastapi import APIRouter, Depends, HTTPException, status
 
 from app.auth import current_user
 from app.db import connection
-from app.models import ListingIn
+from app.models import ListingIn, SkillOut
 
 router = APIRouter(tags=["listings"])
+
+
+@router.get("/skills", response_model=list[SkillOut])
+def get_skills(user_id: str = Depends(current_user)):
+    with connection() as conn, conn.cursor() as cur:
+        cur.execute("SELECT id, label, category FROM skills ORDER BY category, label")
+        return list(cur.fetchall())
 
 
 # ListingIn.category carries a skills.id (e.g. "CALCULUS_TUTORING"); the
