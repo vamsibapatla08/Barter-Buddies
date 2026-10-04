@@ -81,7 +81,6 @@ class ExchangeOut(BaseModel):
     id: str
     status: str
     created_at: datetime
-    updated_at: datetime
     source: str
     requester: PersonRef
     recipient: PersonRef
@@ -97,7 +96,7 @@ class ExchangeSummary(BaseModel):
     status: str
     other: PersonRef
     summary: str
-    created_at: str
+    created_at: datetime
 
 
 class LedgerOut(BaseModel):
@@ -141,4 +140,4 @@ class ReviewOut(BaseModel):
     reviewer: PersonRef
     stars: int
     note: str | None = None
-    created_at: str
+    created_at: datetime

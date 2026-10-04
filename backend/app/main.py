@@ -5,7 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.config import get_settings
 from app.db import close_pool
-from app.routers import exchanges, feed, listings, matches, notifications, profiles, reports, reviews
+from app.routers import exchanges, feed, listings, matches, notifications, profiles, reviews
 
 
 @asynccontextmanager
@@ -27,7 +27,6 @@ app.include_router(feed.router)
 app.include_router(listings.router)
 app.include_router(profiles.router)
 app.include_router(notifications.router)
-app.include_router(reports.router)
 app.include_router(matches.router)
 app.include_router(exchanges.router)
 app.include_router(reviews.router)
