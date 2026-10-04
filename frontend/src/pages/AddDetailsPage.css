@@ -27,14 +27,14 @@
 
 .details-avatars legend {
   margin-bottom: 5px;
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 600;
 }
 
 .details-avatar-hint {
   margin: 0 0 12px;
   color: #6b6253;
-  font-size: 12px;
+  font-size: 13px;
 }
 
 .details-avatar-upload-wrap { position: relative; }
@@ -60,19 +60,19 @@
 .details-avatar-grid {
   display: grid;
   grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: 8px;
+  gap: 6px 4px;
 }
 
 .details-avatar-choice {
   min-width: 0;
-  padding: 5px 3px;
+  padding: 5px 1px;
   border: 1px solid transparent;
   border-radius: 3px;
   background: transparent;
   color: #6b6253;
   cursor: pointer;
   font: inherit;
-  font-size: 10px;
+  font-size: 12px;
   text-align: center;
 }
 
@@ -89,9 +89,9 @@
 
 .details-avatar-choice img {
   display: block;
-  width: 42px;
-  height: 42px;
-  margin: 0 auto 4px;
+  width: 72px;
+  height: 72px;
+  margin: 0 auto 5px;
   border: 1px solid #aa9b83;
   border-radius: 50%;
   object-fit: cover;
@@ -102,22 +102,22 @@
   display: grid;
   width: auto;
   height: auto;
-  min-height: 72px;
+  min-height: 104px;
   place-items: center;
   align-content: center;
   gap: 4px;
-  font-size: 10px;
+  font-size: 14px;
 }
 
 .details-avatar-plus {
   display: grid;
-  width: 42px;
-  height: 42px;
+  width: 72px;
+  height: 72px;
   place-items: center;
   border: 1px dashed #7a263a;
   border-radius: 50%;
   color: #7a263a;
-  font-size: 27px;
+  font-size: 40px;
   line-height: 1;
 }
 
