@@ -4,6 +4,18 @@
   width: min(720px, 100%);
   margin: 90px auto 40px;
 }
+.browse-decoration-wrap {
+  position: absolute;
+  z-index: 0;
+  top: 0;
+  left: 50%;
+  width: min(100%, 520px);
+  height: 0;
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+.browse-decoration-wrap .login-map-fragment { z-index: 0; }
+.browse-page .login-thread-overlay { z-index: 5; }
 .browse-kicker {
   color: #7a263a;
   font: 700 11px 'Courier New', monospace;
