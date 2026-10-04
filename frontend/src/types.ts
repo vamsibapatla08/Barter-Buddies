@@ -53,6 +53,8 @@ export type CreatedListing = {
   available_when: string | null
 }
 
+export type ListingCreateIn = ListingInput
+
 /** Response of GET /listings/{id}. Like CreatedListing, plus the owner. */
 export type ListingDetail = CreatedListing & {
   owner: PersonRef
