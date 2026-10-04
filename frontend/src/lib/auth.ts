@@ -45,4 +45,9 @@ export const auth = {
       return { ok: false, reason: 'network' }
     }
   },
+  async signOut(): Promise<void> {
+    if (!supabase) return
+    const { error } = await supabase.auth.signOut()
+    if (error) throw error
+  },
 }

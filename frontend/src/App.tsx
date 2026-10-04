@@ -1,9 +1,11 @@
-import { useEffect, useState } from 'react'
-import { apiFetch, getFeed } from './lib/api'
-import type { Listing } from './types'
+import { useEffect } from 'react'
+import { apiFetch } from './lib/api'
 import AddDetailsPage from './pages/AddDetailsPage'
 import CreateListingPage from './pages/CreateListingPage'
 import LoginPage from './pages/LoginPage'
+import { auth } from './lib/auth'
+import './pages/LoginPage.css'
+import './home.css'
 
 function App() {
   // Start at member access; keep the community feed available at /home.
@@ -23,64 +25,28 @@ function App() {
 }
 
 function FeedPage() {
-  const [listings, setListings] = useState<Listing[]>([])
-  const [error, setError] = useState<string | null>(null)
-
-  useEffect(() => {
-    getFeed()
-      .then(setListings)
-      .catch((requestError: Error) => setError(requestError.message))
-  }, [])
-
   return (
-    <main className="app-shell">
-      <nav className="nav">
-        <a className="brand" href="/home">
+    <main className="home-page">
+      <div className="login-board-notes" aria-hidden="true">
+        <img className="login-magnifier login-magnifier-left" src="/images/magnifying-glass.svg" alt="" width="160" height="205" draggable={false} />
+        <img className="login-magnifier login-magnifier-right" src="/images/magnifying-glass.svg" alt="" width="160" height="205" draggable={false} />
+      </div>
+      <nav className="home-nav">
+        <a className="login-brand home-brand" href="/home">
+          <i className="login-thread-pin" aria-hidden="true" />
           Barter Buddies
+          <span>Skills shared. Possibilities opened.</span>
         </a>
-        <a className="button button-secondary" href="/login">
-          Sign in
-        </a>
+        <div className="home-account">
+          <img src="/images/member-avatar.jpg" alt="Your profile avatar" />
+          <button type="button" onClick={() => {
+            auth.signOut()
+              .then(() => { window.location.assign('/login') })
+              .catch((signOutError: Error) => console.error('SIGN OUT ERROR:', signOutError))
+          }}>Sign out</button>
+        </div>
       </nav>
 
-      <section className="hero">
-        <p className="eyebrow">Trade what you know</p>
-        <h1>Find a buddy. Learn something new.</h1>
-        <p className="hero-copy">
-          Share your skills, discover useful ones, and make exchanges that work
-          for both of you.
-        </p>
-        <button className="button button-primary" type="button">
-          Browse listings
-        </button>
-      </section>
-
-      <section className="listings-section" aria-labelledby="listings-heading">
-        <div className="section-heading">
-          <div>
-            <p className="eyebrow">Community board</p>
-            <h2 id="listings-heading">Latest listings</h2>
-          </div>
-        </div>
-
-        {error ? (
-          <p className="message" role="alert">
-            {error}
-          </p>
-        ) : listings.length > 0 ? (
-          <div className="listing-grid">
-            {listings.map((listing) => (
-              <article className="listing-card" key={listing.id}>
-                <span className="tag">{listing.category}</span>
-                <h3>{listing.title}</h3>
-                <p>{listing.description}</p>
-              </article>
-            ))}
-          </div>
-        ) : (
-          <p className="message">No listings yet. Be the first to share a skill.</p>
-        )}
-      </section>
     </main>
   )
 }
