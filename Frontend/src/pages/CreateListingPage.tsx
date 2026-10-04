@@ -20,8 +20,11 @@ export default function CreateListingPage() {
       const top = pinPosition('.login-brand .login-thread-pin')
       const left = pinPosition('.login-board-note-left .login-thread-pin')
       const right = pinPosition('.login-board-note-right .login-thread-pin')
+      const ticket = pinPosition('.login-exchange-ticket .login-thread-pin')
       if (!top || !left || !right) return setThreads([])
-      setThreads([ [top, left], [top, right] ].map(([start, end]) => {
+      const connections = [[top, left], [top, right]]
+      if (ticket) connections.push([left, ticket])
+      setThreads(connections.map(([start, end]) => {
         const dx = end.x - start.x
         const dy = end.y - start.y
         const length = Math.hypot(dx, dy)
@@ -35,6 +38,7 @@ export default function CreateListingPage() {
     }
     const observer = new ResizeObserver(update)
     observer.observe(root)
+    root.querySelectorAll('.login-brand, .login-board-note, .login-exchange-ticket').forEach(node => observer.observe(node))
     window.addEventListener('resize', update)
     update()
     return () => {
