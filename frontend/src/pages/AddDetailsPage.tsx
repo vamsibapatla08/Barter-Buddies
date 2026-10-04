@@ -174,7 +174,14 @@ export default function AddDetailsPage() {
           Barter Buddies
           <span>Skills shared. Possibilities opened.</span>
         </a>
-        <section className="login-panel details-panel" aria-labelledby="details-heading">
+        <section
+          className="login-panel details-panel"
+          aria-labelledby="details-heading"
+          onScroll={event => {
+            const offset = Math.min(event.currentTarget.scrollTop * 0.12, 48)
+            board.current?.style.setProperty('--details-scroll-offset', `${offset}px`)
+          }}
+        >
           <img className="login-map-fragment" src="/images/briefing-map.svg" alt="" aria-hidden="true" width="340" height="460" draggable={false} />
           <header className="login-header">
             <p className="login-eyebrow">New member file</p>

@@ -1,5 +1,8 @@
 .details-page {
   min-height: 100%;
+  overflow: hidden;
+  background-position: center var(--details-scroll-offset, 0px);
+  transition: background-position .12s ease-out;
 }
 
 .details-wrap {
@@ -8,6 +11,11 @@
 
 .details-intro {
   max-width: 380px;
+}
+
+.details-panel {
+  max-height: calc(100vh - 170px);
+  overflow-y: auto;
 }
 
 .details-avatars {
@@ -196,6 +204,10 @@
 @media (max-width: 420px) {
   .details-wrap {
     padding-top: 26px;
+  }
+
+  .details-panel {
+    max-height: calc(100vh - 130px);
   }
 
   .details-avatar-grid {
