@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
-import { getFeed, getListing, proposeExchange } from '../lib/api'
+import { getFeed, getListing, getSessionUserId, proposeExchange } from '../lib/api'
+import { clearMyListingId, getMyListingId } from '../lib/myListing'
 import type { Listing, ListingDetail } from '../types'
 import { auth } from '../lib/auth'
 import '../pages/LoginPage.css'
@@ -41,16 +42,11 @@ export default function BrowsePage() {
   const [query, setQuery] = useState('')
   const [signOutError, setSignOutError] = useState('')
 
-  // The listing you just published. /feed hides your own rows, so fetch it by id.
-  const [myListingId] = useState<string | null>(() => {
-    try {
-      return localStorage.getItem('myListingId')
-    } catch {
-      return null
-    }
-  })
+  // The listing you published. /feed hides your own rows, so fetch it by id.
+  // It is only usable once the API confirms you still own it.
   const [mine, setMine] = useState<ListingDetail | null>(null)
   const [mineError, setMineError] = useState('')
+  const [lookingUpMine, setLookingUpMine] = useState(true)
 
   const [propose, setPropose] = useState<Record<string, ProposeState>>({})
 
@@ -76,19 +72,34 @@ export default function BrowsePage() {
   }, [attempt])
 
   useEffect(() => {
-    if (!myListingId) return
     let active = true
-    getListing(myListingId)
-      .then(listing => {
+    setLookingUpMine(true)
+    ;(async () => {
+      try {
+        const userId = await getSessionUserId()
+        const storedId = getMyListingId(userId)
+        if (!storedId || !userId) return
+        const listing = await getListing(storedId)
+        // A listing published by another account on this browser, or one that
+        // has since been removed, must never be offered as yours: the backend
+        // answers 400 "requester_listing_id must be your active offer".
+        if (listing.owner?.id !== userId) {
+          clearMyListingId()
+          return
+        }
         if (active) setMine(listing)
-      })
-      .catch((error: Error) => {
-        if (active) setMineError(error.message || 'Could not load your listing.')
-      })
+      } catch (error) {
+        // 404 means it was deleted or deactivated; stop offering it.
+        clearMyListingId()
+        if (active) setMineError((error as Error).message || 'Could not load your listing.')
+      } finally {
+        if (active) setLookingUpMine(false)
+      }
+    })()
     return () => {
       active = false
     }
-  }, [myListingId])
+  }, [])
 
   async function sendProposal(listing: Listing, note: string) {
     if (!mine) return
@@ -111,10 +122,20 @@ export default function BrowsePage() {
       })
       setStateFor(listing.id, { stage: 'sent', withWhom: listing.owner.name })
     } catch (error) {
+      const raw = (error as Error).message || 'Could not send that proposal.'
+      // The stored listing is no longer a valid offer for this account; drop it
+      // so the page stops proposing it and asks for a new one instead.
+      const stale = raw.includes('requester_listing_id')
+      if (stale) {
+        clearMyListingId()
+        setMine(null)
+      }
       setStateFor(listing.id, {
         stage: 'failed',
         note,
-        message: (error as Error).message || 'Could not send that proposal.',
+        message: stale
+          ? 'The listing you were offering is not yours any more. Publish a new one to propose a trade.'
+          : raw,
       })
     }
   }
@@ -138,13 +159,16 @@ export default function BrowsePage() {
           Barter Buddies
           <span>Skills shared. Possibilities opened.</span>
         </a>
-        <div className="home-account">
-          <img src="/images/member-avatar.jpg" alt="Your profile avatar" />
-          <button type="button" onClick={() => {
-            auth.signOut()
-              .then(() => window.location.assign('/login'))
-              .catch(() => setSignOutError('Could not sign out.'))
-          }}>Sign out</button>
+        <div className="home-toolbar">
+          <button type="button" className="home-requests" onClick={() => window.location.assign('/barter-requests')}>Barter Request</button>
+          <div className="home-account">
+            <img src="/images/member-avatar.jpg" alt="Your profile avatar" />
+            <button type="button" onClick={() => {
+              auth.signOut()
+                .then(() => window.location.assign('/login'))
+                .catch(() => setSignOutError('Could not sign out.'))
+            }}>Sign out</button>
+          </div>
         </div>
       </nav>
       <a className="browse-back browse-back-top" href="/home">← Back to home</a>
@@ -153,7 +177,7 @@ export default function BrowsePage() {
           {signOutError && <p className="browse-notice browse-notice-bad">{signOutError}</p>}
         </div>
 
-        {myListingId && (
+        {(mine || mineError) && (
           <section className="browse-mine" aria-labelledby="browse-mine-heading">
             <span className="browse-kicker">Just published</span>
             <h2 id="browse-mine-heading" className="browse-mine-heading">Your listing is on the board</h2>
@@ -170,10 +194,8 @@ export default function BrowsePage() {
                 </dl>
                 <small>This is what you are offering in a trade.</small>
               </article>
-            ) : mineError ? (
-              <p className="browse-notice browse-notice-bad">{mineError}</p>
             ) : (
-              <p className="browse-notice">Loading your listing…</p>
+              <p className="browse-notice browse-notice-bad">{mineError}</p>
             )}
           </section>
         )}
@@ -183,7 +205,7 @@ export default function BrowsePage() {
           <input type="search" value={query} onChange={event => setQuery(event.target.value)} placeholder="Search for a skill…" autoFocus />
         </label>
 
-        {!myListingId && (
+        {!mine && !lookingUpMine && (
           <p className="browse-notice">
             Publish a listing of your own before proposing a trade.{' '}
             <a href="/create-listing">Publish a barter →</a>

@@ -973,3 +973,57 @@
     transition: none;
   }
 }
+
+/* The account box and the Barter Request button are separate controls that sit
+   side by side. The toolbar owns the positioning that .home-account used to
+   carry, so each keeps its own paper box. */
+.home-toolbar {
+  position: fixed;
+  z-index: 5;
+  top: 38px;
+  right: 24px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.home-toolbar .home-account {
+  position: static;
+  top: auto;
+  right: auto;
+  z-index: auto;
+}
+.home-requests {
+  padding: 0 14px;
+  min-height: 58px;
+  background: #eee4cf;
+  border: 1px solid #d7c8ab;
+  box-shadow: 1px 3px 5px #3c281d38;
+  color: #7a263a;
+  cursor: pointer;
+  font: 700 11px 'Courier New', monospace;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+.home-requests:hover {
+  background: #f5eedf;
+  box-shadow: 2px 5px 8px #3c281d40;
+}
+@media (max-width: 1000px) {
+  .home-toolbar {
+    position: absolute;
+    top: 0;
+    right: 0;
+  }
+}
+@media (max-width: 720px) {
+  .home-toolbar {
+    top: 10px;
+    right: 0;
+    gap: 7px;
+  }
+  .home-requests {
+    padding: 0 9px;
+    min-height: 42px;
+    font-size: 9px;
+  }
+}

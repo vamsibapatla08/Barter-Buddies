@@ -77,6 +77,26 @@ export type ProposeInput = {
   source: 'browse' | 'match'
 }
 
+/** One row of GET /exchanges/mine. */
+export type ExchangeSummary = {
+  id: string
+  status: string
+  /** The other party, never you. */
+  other: PersonRef
+  summary: string
+  created_at: string
+}
+
+/** Response of GET /exchanges/mine. */
+export type LedgerOut = {
+  incoming: ExchangeSummary[]
+  pending: ExchangeSummary[]
+  active: ExchangeSummary[]
+  closed: ExchangeSummary[]
+}
+
+export type RespondAction = 'accept' | 'decline'
+
 /** Response of POST /exchanges. */
 export type ExchangeOut = {
   id: string

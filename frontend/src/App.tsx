@@ -9,6 +9,7 @@ import './pages/LoginPage.css'
 import './home.css'
 import HomeBoard from './pages/HomeBoard'
 import BrowsePage from './pages/BrowsePage'
+import BarterRequestsPage from './pages/BarterRequestsPage'
 import ListingCard from './components/ListingCard'
 import SkeletonCard from './components/SkeletonCard'
 import EmptyState from './components/EmptyState'
@@ -20,6 +21,7 @@ function App() {
   if (!path || path === '/login') return <LoginPage />
   if (path === '/home') return <FeedPage />
   if (path === '/browse') return <BrowsePage />
+  if (path === '/barter-requests') return <BarterRequestsPage />
   if (path === '/add-details') return <AddDetailsPage />
   if (path === '/create-listing') return <CreateListingPage />
   return <LoginPage />
@@ -64,13 +66,16 @@ function FeedPage() {
           Barter Buddies
           <span>Skills shared. Possibilities opened.</span>
         </a>
-        <div className="home-account">
-          <img src="/images/member-avatar.jpg" alt="Your profile avatar" />
-          <button type="button" onClick={() => {
-            auth.signOut()
-              .then(() => { window.location.assign('/login') })
-              .catch((signOutError: Error) => console.error('SIGN OUT ERROR:', signOutError))
-          }}>Sign out</button>
+        <div className="home-toolbar">
+          <button type="button" className="home-requests" onClick={() => window.location.assign('/barter-requests')}>Barter Request</button>
+          <div className="home-account">
+            <img src="/images/member-avatar.jpg" alt="Your profile avatar" />
+            <button type="button" onClick={() => {
+              auth.signOut()
+                .then(() => { window.location.assign('/login') })
+                .catch((signOutError: Error) => console.error('SIGN OUT ERROR:', signOutError))
+            }}>Sign out</button>
+          </div>
         </div>
       </nav>
       <HomeBoard />

@@ -1,6 +1,7 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import type { FormEvent } from 'react'
-import { createListing, getSkills } from '../lib/api'
+import { createListing, getSessionUserId, getSkills } from '../lib/api'
+import { clearMyListingId, setMyListingId } from '../lib/myListing'
 import { SPOTS, TIME_OPTIONS, dateOptions } from '../lib/schedule'
 import { SKILLS } from '../lib/skills'
 import type { ListingMode, Skill } from '../types'
@@ -64,7 +65,11 @@ export default function CreateListingPage() {
         mode,
         available_when: `${date}, ${time}`,
       })
-      localStorage.setItem('myListingId', created.id)
+      // Store it against the signed-in user; a bare id would be offered by
+      // whoever signs in next on this browser.
+      const userId = await getSessionUserId()
+      if (userId) setMyListingId(userId, created.id)
+      else clearMyListingId()
       window.location.assign('/browse')
     } catch (error) {
       setSubmitError((error as Error).message || 'Could not publish that listing.')

@@ -2,11 +2,13 @@ import { supabase } from './supabase'
 import type {
   CreatedListing,
   ExchangeOut,
+  LedgerOut,
   Listing,
   ListingDetail,
   ListingInput,
   Match,
   ProposeInput,
+  RespondAction,
   Skill,
 } from '../types'
 
@@ -16,6 +18,15 @@ export const SUPABASE_NOT_CONFIGURED =
   'Supabase is not configured. Check VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY.'
 export const NOT_SIGNED_IN = 'You are not signed in. Please sign in again.'
 export const TIMED_OUT = 'The server took too long to respond. Check the Railway logs.'
+
+/** The signed-in user's id, which is the `sub` the backend reads from the JWT. */
+export async function getSessionUserId(): Promise<string | null> {
+  if (!supabase) return null
+  const {
+    data: { session },
+  } = await supabase.auth.getSession()
+  return session?.user?.id ?? null
+}
 
 export async function apiFetch<T>(
   path: string,
@@ -109,6 +120,19 @@ export function proposeExchange(body: ProposeInput): Promise<ExchangeOut> {
   return apiFetch<ExchangeOut>('/exchanges', {
     method: 'POST',
     body: JSON.stringify(body),
+  })
+}
+
+/** GET /exchanges/mine. The four buckets of barter requests. */
+export function getMyExchanges(): Promise<LedgerOut> {
+  return apiFetch<LedgerOut>('/exchanges/mine')
+}
+
+/** POST /exchanges/{id}/respond. Recipient only. */
+export function respondToExchange(id: string, action: RespondAction): Promise<ExchangeOut> {
+  return apiFetch<ExchangeOut>(`/exchanges/${encodeURIComponent(id)}/respond`, {
+    method: 'POST',
+    body: JSON.stringify({ action }),
   })
 }
 
