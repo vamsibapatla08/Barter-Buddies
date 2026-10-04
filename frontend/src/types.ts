@@ -21,6 +21,12 @@ export type Listing = {
   owner: PersonRef
 }
 
+export type Skill = {
+  id: string
+  label: string
+  category: string
+}
+
 export type Match = {
   user_id: string
   name: string

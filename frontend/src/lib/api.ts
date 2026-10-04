@@ -1,5 +1,5 @@
 import { supabase } from './supabase'
-import type { Listing, Match } from '../types'
+import type { Listing, Match, Skill } from '../types'
 
 const API_URL = import.meta.env.VITE_API_URL
 
@@ -51,6 +51,21 @@ async function errorMessage(response: Response): Promise<string> {
 export function getFeed(category?: string): Promise<Listing[]> {
   const query = category ? `?category=${encodeURIComponent(category)}` : ''
   return apiFetch<Listing[]>(`/feed${query}`)
+}
+
+export function getSkills(): Promise<Skill[]> {
+  return apiFetch<Skill[]>('/skills').catch(async apiError => {
+    if (!supabase) throw apiError
+
+    const { data, error } = await supabase
+      .from('skills')
+      .select('id, label, category')
+      .order('category')
+      .order('label')
+
+    if (error) throw apiError
+    return data as Skill[]
+  })
 }
 
 export function getMatches(): Promise<Match[]> {

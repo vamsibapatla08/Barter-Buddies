@@ -1,10 +1,20 @@
-import { useLayoutEffect, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
+import { getSkills } from '../lib/api'
+import type { Skill } from '../types'
 import './LoginPage.css'
 import './CreateListingPage.css'
 
 export default function CreateListingPage() {
   const board = useRef<HTMLElement>(null)
   const [threads, setThreads] = useState<string[]>([])
+  const [skills, setSkills] = useState<Skill[]>([])
+  const [skillsError, setSkillsError] = useState('')
+
+  useEffect(() => {
+    getSkills()
+      .then(setSkills)
+      .catch((error: Error) => setSkillsError(error.message || 'Could not load the skill list.'))
+  }, [])
 
   useLayoutEffect(() => {
     const root = board.current
@@ -80,7 +90,10 @@ export default function CreateListingPage() {
             <h1 id="listing-heading">Publish a Barter</h1>
             <p className="listing-intro">Start a listing and give the crew the coordinates for a fair exchange.</p>
           </header>
-          <form onSubmit={event => event.preventDefault()}>
+          <form onSubmit={event => {
+            event.preventDefault()
+            window.location.assign('/browse')
+          }}>
             <fieldset className="listing-box">
               <legend>Listing</legend>
               <label htmlFor="listing-title">Start a listing</label>
@@ -89,13 +102,20 @@ export default function CreateListingPage() {
             <fieldset className="listing-box">
               <legend>Offer</legend>
               <label htmlFor="listing-offer">What are you offering?</label>
-              <input id="listing-offer" name="offer" type="text" placeholder="Your skill, time, or know-how" required />
+              <select id="listing-offer" name="offer" defaultValue="" required disabled={!skills.length}>
+                <option value="" disabled>{skills.length ? 'Select a skill' : 'Loading skills…'}</option>
+                {skills.map(skill => <option key={skill.id} value={skill.id}>{skill.label}</option>)}
+              </select>
             </fieldset>
             <fieldset className="listing-box">
               <legend>Counter Ask</legend>
               <label htmlFor="listing-ask">What would make this a fair exchange?</label>
-              <input id="listing-ask" name="ask" type="text" placeholder="What would you like in return?" required />
+              <select id="listing-ask" name="ask" defaultValue="" required disabled={!skills.length}>
+                <option value="" disabled>{skills.length ? 'Select a skill needed' : 'Loading skills…'}</option>
+                {skills.map(skill => <option key={skill.id} value={skill.id}>{skill.label}</option>)}
+              </select>
             </fieldset>
+            {skillsError && <p role="alert" className="listing-skill-error">{skillsError}</p>}
             <fieldset className="listing-box listing-coordinates">
               <legend>Coordinates</legend>
               <div><label htmlFor="listing-date">Date</label><select id="listing-date" name="date" defaultValue=""><option value="" disabled>Select date</option><option>Today</option><option>Tomorrow</option><option>This weekend</option></select></div>
