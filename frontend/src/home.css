@@ -200,8 +200,66 @@
 .action-publish {
   --paper: #b96758;
   --ink: #321f1c;
+  margin-bottom: 35px;
   transform: rotate(-.6deg) translateY(2px);
 }
+.crew-id-card {
+  position: absolute;
+  z-index: 6;
+  right: -22px;
+  bottom: -43px;
+  display: block;
+  width: 198px;
+  padding: 7px;
+  border: 1px solid #5e5649;
+  border-radius: 5px;
+  background: #e9e4d9;
+  box-shadow: 2px 7px 12px #20170c70, inset 0 1px #fff9e9;
+  color: #24221f;
+  transform: rotate(8deg) scale(1.08);
+  transform-origin: right bottom;
+  pointer-events: none;
+}
+.crew-id-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 51px;
+  margin: -7px -7px 0;
+  padding: 6px 8px;
+  border-radius: 4px 4px 0 0;
+  background: linear-gradient(110deg,#182532,#293c49 65%,#17232d);
+  color: #f0eadb;
+}
+.crew-id-avatar {
+  flex: 0 0 40px;
+  width: 40px;
+  height: 40px;
+  border: 2px solid #c5c6bf;
+  border-radius: 50%;
+  background: #b5b7b2;
+}
+.crew-id-title { display: grid; gap: 4px; min-width: 0; }
+.crew-id-title b { font: 700 8px/1.1 'Courier New',monospace; letter-spacing: .06em; }
+.crew-id-title small { color: #d5d4cc; font: 6px/1 'Courier New',monospace; letter-spacing: .08em; }
+.crew-id-band {
+  display: block;
+  margin-inline: -7px;
+  padding: 3px 8px;
+  background: #d46d4c;
+  color: #fff0dc;
+  font: 700 6px/1.2 'Courier New',monospace;
+  letter-spacing: .11em;
+}
+.crew-id-details {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 6px;
+  padding-top: 8px;
+}
+.crew-id-details b { font: 700 9px/1.1 Arial,sans-serif; letter-spacing: .02em; }
+.crew-id-details small { color: #4d4941; font: 6px/1.1 'Courier New',monospace; letter-spacing: .04em; white-space: nowrap; }
 .action-card:hover {
   transform: rotate(0) translateY(-9px);
   box-shadow: inset 0 0 30px #3d311420,3px 9px 8px #38271c40,8px 23px 23px -8px #30211680;
@@ -223,9 +281,6 @@
   background: radial-gradient(circle at 32% 26%,#f1dcb0,#b69861 48%,#6d522b 83%);
   border-radius: 50%;
   box-shadow: inset 0 1px 1px #f8eac9,1px 2px 2px #392b1966,3px 8px 5px #30261955;
-}
-.action-browse .board-pin {
-  background: radial-gradient(circle at 32% 26%,#94c1bd,#34716f 48%,#1d4849 83%);
 }
 .card-index {
   font: 700 9px/1.5 Courier New,monospace;
@@ -264,55 +319,159 @@
 }
 .asset-label {
   position: absolute;
-  bottom: 13px;
+  z-index: 2;
+  bottom: 6px;
+  left: 1px;
+  color: #172832;
+  font: 700 18px/1 Georgia,serif;
+  letter-spacing: -.035em;
+  white-space: nowrap;
+}
+.browse-spyglass {
+  position: absolute;
+  z-index: 5;
+  left: -120px;
+  top: 70px;
+  width: 275px;
+  height: 68px;
+  transform: rotate(-20deg);
+  filter: drop-shadow(3px 8px 5px #17201eb3);
+}
+.browse-spyglass i { position: absolute; display: block; }
+.spyglass-body {
+  left: 10%;
+  right: 9%;
+  top: 21%;
+  height: 58%;
+  border: 1px solid #131715;
+  border-radius: 18% 10% 10% 18%;
+  background: linear-gradient(180deg,#101311 0%,#55584f 11%,#282d29 20%,#171c1a 48%,#343a34 73%,#181d1a 91%,#080b09 100%);
+  box-shadow: inset 0 2px 2px #ded3b333,inset 0 -3px 3px #000c;
+}
+.spyglass-hood {
+  z-index: 1;
   left: 0;
-  padding: 7px 11px;
-  color: #343d38;
-  background: #e1d4ae;
-  transform: rotate(-7deg);
-  box-shadow: 1px 2px 3px #15293644;
-  font: 700 9px Courier New,monospace;
-  letter-spacing: .08em;
+  top: 10%;
+  width: 20%;
+  height: 80%;
+  border: 1px solid #493a27;
+  border-radius: 35% 8% 8% 35%;
+  background: linear-gradient(180deg,#3b3022 0%,#b39768 13%,#604b30 25%,#181b18 39%,#121613 65%,#90754a 80%,#3a3022 100%);
+  box-shadow: inset 1px 2px 2px #f1d7a566,inset -3px -2px 3px #17171299,1px 0 1px #111;
+}
+.spyglass-ring {
+  z-index: 2;
+  left: 31%;
+  top: 15%;
+  width: 3%;
+  height: 70%;
+  border-inline: 1px solid #c0a16c;
+  background: linear-gradient(90deg,#27241e,#b19460 35%,#604a2e 70%,#24231e);
+  box-shadow: 1px 0 2px #111;
+}
+.spyglass-focus {
+  z-index: 2;
+  left: 40%;
+  top: 17%;
+  width: 27%;
+  height: 66%;
+  border: 1px solid #111512;
+  border-block-color: #9d8b64;
+  border-radius: 3px;
+  background: repeating-linear-gradient(90deg,#151917 0 5px,#6f7065 5px 5.7px,#242925 5.7px 9px);
+  box-shadow: inset 0 2px 2px #d4c39b26,inset 0 -2px 2px #000a;
+}
+.spyglass-knurl {
+  z-index: 2;
+  right: 24%;
+  top: 13%;
+  width: 3%;
+  height: 74%;
+  border-left: 1px solid #cfb789;
+  border-right: 1px solid #493923;
+  background: repeating-linear-gradient(90deg,#1b1e1a 0 2px,#b39a6b 2px 2.6px,#4b412e 2.6px 4px);
+  box-shadow: 1px 0 2px #111;
+}
+.spyglass-eyepiece {
+  z-index: 1;
+  right: 0;
+  top: 5%;
+  width: 25%;
+  height: 90%;
+  border: 1px solid #54432d;
+  border-radius: 10% 32% 32% 10%;
+  background: linear-gradient(180deg,#423624 0%,#ad9060 12%,#ddc79e 22%,#8d7651 34%,#51432f 54%,#251f18 72%,#c4a977 87%,#54432d 100%);
+  box-shadow: inset 1px 2px 2px #fff0c25c,inset -3px -2px 4px #211a12aa;
+}
+.spyglass-eyepiece::after {
+  content: '';
+  position: absolute;
+  top: 7%;
+  right: -2px;
+  width: 5px;
+  height: 86%;
+  border: 1px solid #6c5739;
+  border-radius: 0 35% 35% 0;
+  background: linear-gradient(180deg,#d5bf92,#716044 22%,#2b2922 50%,#786347 76%,#d0b989);
+}
+.spyglass-glint {
+  z-index: 3;
+  left: 17%;
+  top: 27%;
+  width: 46%;
+  height: 1px;
+  background: linear-gradient(90deg,transparent,#e8e1ca80,transparent);
+  transform: rotate(-2deg);
+}
+.spyglass-pin {
+  position: absolute;
+  z-index: 4;
+  left: 6px;
+  top: 13px;
+  width: 22px;
+  height: 22px;
+  border: 1px solid #116269;
+  border-radius: 50%;
+  background: radial-gradient(circle at 34% 28%,#29a9ad,#087b83 52%,#034b54 86%);
+  box-shadow: 2px 4px 4px #102629a8,inset 1px 1px 2px #a0f3e366;
+}
+.spyglass-pin::after {
+  content: '';
+  position: absolute;
+  top: 19px;
+  left: 7px;
+  width: 5px;
+  height: 15px;
+  background: linear-gradient(90deg,#134f55,#0b6b71,#06383e);
+  clip-path: polygon(0 0,100% 0,50% 100%);
 }
 .camera-lens {
   position: absolute;
+  z-index: 4;
   right: -9px;
-  bottom: 19px;
-  width: 122px;
-  height: 122px;
-  border: 3px solid #a29c84;
+  bottom: 26px;
+  width: 102px;
+  height: 102px;
+  border: 3px solid #938f80;
   border-radius: 50%;
-  background: repeating-conic-gradient(#333731 0deg 1deg,#5c6055 1deg 2deg,#2a2e2b 2deg 3deg);
-  box-shadow: inset 0 0 0 3px #242c27,inset 0 0 0 6px #999786,inset 0 0 0 9px #1c2523,5px 10px 9px #19231c88,0 1px 1px #eee3c6;
-  transform: rotate(-22deg);
+  background: repeating-conic-gradient(#272c29 0deg 1deg,#737368 1deg 2deg,#303530 2deg 3deg);
+  box-shadow: inset 0 0 0 3px #202522,inset 0 0 0 6px #aaa48f,inset 0 0 0 10px #171e1b,3px 7px 6px #18221f9c,0 1px 1px #eee3c6;
+  transform: rotate(-12deg);
 }
-.camera-lens:before {
-  content: "BARTER OPTICS • 50mm 1:1.8";
+.camera-lens::before {
+  content: '';
   position: absolute;
-  top: 14px;
-  left: 18px;
-  right: 18px;
-  color: #dbd9c6;
-  font: 5px/1 monospace;
-  letter-spacing: .6px;
-  text-align: center;
-}
-.camera-lens>span {
-  position: absolute;
-  inset: 23px;
-  border: 5px solid #192421;
+  inset: 17px;
+  border: 2px solid #828174;
   border-radius: 50%;
-  background: radial-gradient(ellipse at 32% 26%,#a8c3b2bb 0 7%,transparent 28%),radial-gradient(ellipse at 74% 80%,#9b6d8566,transparent 35%),radial-gradient(circle at 55% 55%,#101d1f 20%,#384b48 55%,#141e1f 68%);
-  box-shadow: 0 0 0 2px #70766a,0 0 0 5px #292e2b,inset 2px 3px 4px #000;
+  background: radial-gradient(ellipse at 33% 27%,#d7e4d888 0 5%,transparent 28%),radial-gradient(ellipse at 71% 74%,#8c608166,transparent 35%),radial-gradient(circle at 52% 52%,#111b1d 10%,#3d4d4a 46%,#111817 69%,#090e0e 100%);
+  box-shadow: inset 1px 2px 4px #000c,0 0 0 3px #252b28;
 }
 .camera-lens i {
   position: absolute;
-  inset: 36px 40px 65px 35px;
-  background: #dfefe9;
-  border-radius: 70% 25% 60% 20%;
-  filter: blur(2px);
-  opacity: .5;
-  transform: rotate(-30deg);
+  inset: 8px;
+  border: 1px solid #b6ad94;
+  border-radius: 50%;
 }
 .paper-coordinate {
   position: absolute;
@@ -658,9 +817,17 @@
   .publish-note {
     padding-top: 27px;
   }
+  .browse-spyglass {
+    left: -101px;
+    top: 66px;
+    width: 247px;
+    height: 61px;
+  }
   .camera-lens {
-    width: 142px;
-    height: 142px;
+    right: -5px;
+    bottom: 26px;
+    width: 92px;
+    height: 92px;
   }
 }
 @media(max-width:1000px) {
@@ -739,6 +906,12 @@
   .action-card {
     padding-inline: 25px;
   }
+  .action-publish { margin-bottom: 32px; }
+  .crew-id-card {
+    right: -8px;
+    bottom: -39px;
+    width: min(188px, 78%);
+  }
   .action-card h2 {
     font-size: 41px;
   }
@@ -749,6 +922,23 @@
   }
   .blueprint-sheet {
     height: 225px;
+  }
+  .browse-spyglass {
+    left: -48px;
+    top: 61px;
+    width: min(230px, 92%);
+    height: 57px;
+  }
+  .spyglass-pin {
+    left: 5px;
+    top: 12px;
+    transform: scale(.86);
+  }
+  .camera-lens {
+    right: -5px;
+    bottom: 29px;
+    width: 90px;
+    height: 90px;
   }
   .card-caption strong {
     font-size: 24px;
