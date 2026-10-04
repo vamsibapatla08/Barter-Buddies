@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { getFeed } from './lib/api'
+import { apiFetch, getFeed } from './lib/api'
 import type { Listing } from './types'
 import AddDetailsPage from './pages/AddDetailsPage'
 import CreateListingPage from './pages/CreateListingPage'
@@ -8,6 +8,13 @@ import LoginPage from './pages/LoginPage'
 function App() {
   // Start at member access; keep the community feed available at /home.
   const path = window.location.pathname.replace(/\/$/, '')
+
+  useEffect(() => {
+    apiFetch('/exchanges/mine')
+      .then((data) => console.log('BACKEND TEST:', data))
+      .catch((err) => console.error('BACKEND ERROR:', err))
+  }, [])
+
   if (!path || path === '/login') return <LoginPage />
   if (path === '/home') return <FeedPage />
   if (path === '/add-details') return <AddDetailsPage />

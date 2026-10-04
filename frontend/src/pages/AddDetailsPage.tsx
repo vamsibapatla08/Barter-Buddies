@@ -1,3 +1,4 @@
+import { auth } from '../lib/auth'
 import { useLayoutEffect, useRef, useState } from 'react'
 import type { FormEvent } from 'react'
 import './LoginPage.css'
@@ -108,13 +109,20 @@ export default function AddDetailsPage() {
     }
   }, [])
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
     if (password !== confirmPassword) {
       setPasswordError('Passwords do not match.')
       return
     }
+    const form = new FormData(event.currentTarget)
+    const email = String(form.get('email') ?? '').trim()
     setPasswordError('')
+    const result = await auth.signUp({ email, password })
+    if (!result.ok) {
+      setPasswordError('Could not create account.')
+      return
+    }
     setSubmitted(true)
     window.location.assign('/create-listing')
   }
