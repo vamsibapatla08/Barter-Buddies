@@ -9,6 +9,12 @@
   padding-top: 38px;
 }
 
+.details-map {
+  top: 178px;
+  right: -201px;
+  z-index: 0;
+}
+
 .details-intro {
   max-width: 380px;
 }
@@ -204,6 +210,11 @@
 @media (max-width: 420px) {
   .details-wrap {
     padding-top: 26px;
+  }
+
+  .details-map {
+    top: 148px;
+    right: -22px;
   }
 
   .details-panel {

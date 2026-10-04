@@ -174,6 +174,7 @@ export default function AddDetailsPage() {
           Barter Buddies
           <span>Skills shared. Possibilities opened.</span>
         </a>
+        <img className="login-map-fragment details-map" src="/images/briefing-map.svg" alt="" aria-hidden="true" width="340" height="460" draggable={false} />
         <section
           className="login-panel details-panel"
           aria-labelledby="details-heading"
@@ -182,7 +183,6 @@ export default function AddDetailsPage() {
             board.current?.style.setProperty('--details-scroll-offset', `${offset}px`)
           }}
         >
-          <img className="login-map-fragment" src="/images/briefing-map.svg" alt="" aria-hidden="true" width="340" height="460" draggable={false} />
           <header className="login-header">
             <p className="login-eyebrow">New member file</p>
             <h1 id="details-heading">Add your details</h1>
@@ -194,7 +194,7 @@ export default function AddDetailsPage() {
           {submitted ? (
             <div className="details-notice" role="status">
               Your details are ready for the next step.
-              <a href="/login">Continue to sign in</a>
+              <a href="/create-listing">Continue to create a listing</a>
             </div>
           ) : (
             <form onSubmit={handleSubmit}>

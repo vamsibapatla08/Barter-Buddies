@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { getFeed } from './lib/api'
 import type { Listing } from './types'
 import AddDetailsPage from './pages/AddDetailsPage'
+import CreateListingPage from './pages/CreateListingPage'
 import LoginPage from './pages/LoginPage'
 
 function App() {
@@ -9,6 +10,7 @@ function App() {
   const path = window.location.pathname.replace(/\/$/, '')
   if (path === '/login') return <LoginPage />
   if (path === '/add-details') return <AddDetailsPage />
+  if (path === '/create-listing') return <CreateListingPage />
   return <FeedPage />
 }
 
