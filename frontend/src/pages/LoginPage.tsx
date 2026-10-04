@@ -70,7 +70,6 @@ export default function LoginPage() {
   const [pending, setPending] = useState(false)
   const [signedIn, setSignedIn] = useState(false)
   const [error, setError] = useState('')
-  const [notice, setNotice] = useState('')
   const submitting = useRef(false)
   const emailInput = useRef<HTMLInputElement>(null)
   const passwordInput = useRef<HTMLInputElement>(null)
@@ -86,7 +85,6 @@ export default function LoginPage() {
     if (submitting.current || signedIn) return
     setTouched({ email: true, password: true })
     setError('')
-    setNotice('')
     if (emailError || passwordError) {
       const invalidInput = emailError ? emailInput : passwordInput
       invalidInput.current?.focus()
@@ -188,10 +186,7 @@ export default function LoginPage() {
                 {touched.email && emailError && <p className="login-field-error" id="login-email-error">{emailError}</p>}
               </div>
               <div className="login-field">
-                <div className="login-label-row">
-                  <label htmlFor="login-password">Password</label>
-                  <button className="login-text-button" type="button" disabled={pending} onClick={() => setNotice('Password reset is not available yet. Please try again later.')}>Forgot password?</button>
-                </div>
+                <label htmlFor="login-password">Password</label>
                 <div className="login-password">
                   <input ref={passwordInput} id="login-password" name="password" type={visible ? 'text' : 'password'} autoComplete="current-password" required
                     value={password} disabled={pending}
@@ -212,7 +207,6 @@ export default function LoginPage() {
           )}
           <div role="status" aria-live="polite" aria-atomic="true">
             {pending && <p className="login-notice">Verifying your credentials…</p>}
-            {notice && <p className="login-notice">{notice}</p>}
           </div>
         </section>
         <footer className="login-footer"><span>The briefing room</span><a href="/home">Back to the community</a></footer>

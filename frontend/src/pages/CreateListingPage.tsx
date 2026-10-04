@@ -82,20 +82,42 @@ export default function CreateListingPage() {
     if (!root) return
     const update = () => {
       const origin = root.getBoundingClientRect()
-      const pin = (selector: string) => {
-        const element = root.querySelector<HTMLElement>(selector)
-        if (!element?.getClientRects().length) return null
-        const rect = element.getBoundingClientRect()
-        return { x: rect.left + rect.width / 2 - origin.left, y: rect.top + rect.height / 2 - origin.top }
+      const pinPosition = (selector: string) => {
+        const pin = root.querySelector<HTMLElement>(selector)
+        if (!pin?.getClientRects().length) return null
+        const rect = pin.getBoundingClientRect()
+        return {
+          x: rect.left + rect.width / 2 - origin.left + root.scrollLeft,
+          y: rect.top + rect.height / 2 - origin.top + root.scrollTop,
+        }
       }
-      const top = pin('.login-brand .login-thread-pin')
-      const left = pin('.login-board-note-left .login-thread-pin')
-      const right = pin('.login-board-note-right .login-thread-pin')
-      if (!top || !left || !right) return setThreads([])
-      setThreads([`M ${top.x} ${top.y} Q ${(top.x + left.x) / 2} ${(top.y + left.y) / 2 + 2} ${left.x} ${left.y}`, `M ${top.x} ${top.y} Q ${(top.x + right.x) / 2} ${(top.y + right.y) / 2 + 2} ${right.x} ${right.y}`])
+      const top = pinPosition('.login-brand .login-thread-pin')
+      const left = pinPosition('.login-board-note-left .login-thread-pin')
+      const right = pinPosition('.login-board-note-right .login-thread-pin')
+      const ticket = pinPosition('.login-exchange-ticket .login-thread-pin')
+      const wanted = pinPosition('.login-wanted-note .login-thread-pin')
+      if (!top || !left || !right) {
+        setThreads([])
+        return
+      }
+      const connections = [[top, left], [top, right]]
+      if (ticket) connections.push([left, ticket])
+      if (wanted) connections.push([right, wanted])
+      setThreads(connections.map(([start, end]) => {
+        const dx = end.x - start.x
+        const dy = end.y - start.y
+        const length = Math.hypot(dx, dy)
+        const inset = 5.5 / length
+        const startX = start.x + dx * inset
+        const startY = start.y + dy * inset
+        const endX = end.x - dx * inset
+        const endY = end.y - dy * inset
+        return `M ${startX} ${startY} Q ${(startX + endX) / 2} ${(startY + endY) / 2 + 2} ${endX} ${endY}`
+      }))
     }
     const observer = new ResizeObserver(update)
     observer.observe(root)
+    root.querySelectorAll('.login-wrap, .login-brand, .login-board-note, .login-exchange-ticket, .login-wanted-note').forEach(node => observer.observe(node))
     window.addEventListener('resize', update)
     update()
     return () => {
@@ -106,12 +128,53 @@ export default function CreateListingPage() {
 
   return (
     <main className="login-page listing-page" ref={board}>
-      <svg className="login-thread-overlay" aria-hidden="true" focusable="false">{threads.map((path, index) => <path key={index} className="login-thread-core" d={path} />)}</svg>
+      <svg className="login-thread-overlay" aria-hidden="true" focusable="false">
+        {threads.map((path, index) => (
+          <g key={index}>
+            <path className="login-thread-edge" d={path} />
+            <path className="login-thread-core" d={path} />
+            <path className="login-thread-fiber" d={path} />
+          </g>
+        ))}
+      </svg>
       <div className="login-board-notes" aria-hidden="true">
-        <img className="login-magnifier login-magnifier-left" src="/images/magnifying-glass.svg" alt="" />
-        <img className="login-magnifier login-magnifier-right" src="/images/magnifying-glass.svg" alt="" />
-        <div className="login-board-note login-board-note-left"><i className="login-thread-pin" /><span>The exchange board</span><p>Good at something?<br />Someone here<br />could use your help.</p><small>Share a skill. Learn another.</small></div>
-        <div className="login-board-note login-board-note-right"><i className="login-thread-pin" /><span>A simple agreement</span><p>Your know-how.<br />Their next step.</p><small>That’s a fair exchange.</small></div>
+        <div className="login-filmstrip">
+          <div className="login-film-frame"><img src="/images/doorway-contact.png" alt="" width="240" height="145" draggable={false} /></div>
+          <div className="login-film-detail"><img src="/images/doorway-contact.png" alt="" width="100" height="145" draggable={false} /></div>
+          <span className="login-film-reference">35 MM · CONTACT 01</span>
+          <i className="login-film-clip" />
+        </div>
+        <img className="login-magnifier login-magnifier-left" src="/images/magnifying-glass.svg" alt="" width="160" height="205" draggable={false} />
+        <img className="login-magnifier login-magnifier-right" src="/images/magnifying-glass.svg" alt="" width="160" height="205" draggable={false} />
+        <div className="login-wanted-note">
+          <i className="login-thread-pin" />
+          <span className="login-wanted-kicker">Most</span>
+          <h2>Wanted</h2>
+          <p>Skills worth exchanging</p>
+          <ul>
+            <li>Math tutoring</li>
+            <li>Bicycle repairs</li>
+            <li>Guitar lessons</li>
+            <li>Resume help</li>
+          </ul>
+          <small>Make your offer</small>
+        </div>
+        <div className="login-exchange-ticket">
+          <img src="/images/exchange-ticket.svg" alt="" width="290" height="226" draggable={false} />
+          <i className="login-thread-pin" />
+        </div>
+        <div className="login-board-note login-board-note-left">
+          <i className="login-thread-pin" />
+          <span>The exchange board</span>
+          <p>Good at something?<br />Someone here<br />could use your help.</p>
+          <small>Share a skill. Learn another.</small>
+        </div>
+        <div className="login-board-note login-board-note-right">
+          <i className="login-thread-pin" />
+          <span>A simple agreement</span>
+          <p>Your know-how.<br />Their next step.</p>
+          <small>That’s a fair exchange.</small>
+        </div>
       </div>
       <div className="login-wrap listing-wrap">
         <a className="login-brand listing-brand" href="/home"><i className="login-thread-pin" aria-hidden="true" />Barter Buddies<span>Skills shared. Possibilities opened.</span></a>
