@@ -10,6 +10,127 @@
   max-width: 380px;
 }
 
+.details-avatars {
+  min-width: 0;
+  margin: 0 0 24px;
+  padding: 0;
+  border: 0;
+}
+
+.details-avatars legend {
+  margin-bottom: 5px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.details-avatar-hint {
+  margin: 0 0 12px;
+  color: #6b6253;
+  font-size: 12px;
+}
+
+.details-avatar-upload-wrap { position: relative; }
+
+.details-avatar-delete {
+  position: absolute;
+  z-index: 1;
+  top: -3px;
+  right: -3px;
+  display: grid;
+  width: 22px;
+  height: 22px;
+  place-items: center;
+  border: 1px solid #fcf8ef;
+  border-radius: 50%;
+  background: #302c25;
+  color: #fffaf2;
+  font-size: 17px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.details-avatar-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.details-avatar-choice {
+  min-width: 0;
+  padding: 5px 3px;
+  border: 1px solid transparent;
+  border-radius: 3px;
+  background: transparent;
+  color: #6b6253;
+  cursor: pointer;
+  font: inherit;
+  font-size: 10px;
+  text-align: center;
+}
+
+.details-avatar-choice:hover,
+.details-avatar-choice.is-selected {
+  border-color: #aa9b83;
+  background: #fcf8ef;
+  color: #302c25;
+}
+
+.details-avatar-choice.is-selected {
+  box-shadow: inset 0 0 0 1px #7a263a;
+}
+
+.details-avatar-choice img {
+  display: block;
+  width: 42px;
+  height: 42px;
+  margin: 0 auto 4px;
+  border: 1px solid #aa9b83;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.details-avatar-upload-choice {
+  position: relative;
+  display: grid;
+  width: auto;
+  height: auto;
+  min-height: 72px;
+  place-items: center;
+  align-content: center;
+  gap: 4px;
+  font-size: 10px;
+}
+
+.details-avatar-plus {
+  display: grid;
+  width: 42px;
+  height: 42px;
+  place-items: center;
+  border: 1px dashed #7a263a;
+  border-radius: 50%;
+  color: #7a263a;
+  font-size: 27px;
+  line-height: 1;
+}
+
+.details-avatar-choice .details-avatar-plus { display: grid; }
+
+.details-avatar-upload-choice input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.details-avatar-choice span {
+  display: block;
+  overflow-wrap: anywhere;
+  line-height: 1.2;
+}
+
+
 .details-submit {
   position: relative;
   width: 100%;
@@ -75,5 +196,9 @@
 @media (max-width: 420px) {
   .details-wrap {
     padding-top: 26px;
+  }
+
+  .details-avatar-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 }
