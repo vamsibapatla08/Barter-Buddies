@@ -29,10 +29,32 @@
   transform: translateY(-1px);
 }
 
-.requests-header { margin: 0 0 26px; }
-.requests-kicker { color: #7a263a; font: 700 11px 'Courier New', monospace; letter-spacing: .16em; text-transform: uppercase; }
-.requests-header h1 { margin: 12px 0; font: 400 clamp(28px, 5vw, 42px)/1.15 Georgia, serif; color: #1e1e1c; }
+.requests-header { margin: 0 0 26px; text-align: left; }
+.requests-kicker { display: block; color: #7a263a; font: 700 clamp(26px, 4.7vw, 50px)/1.05 Georgia, serif; letter-spacing: .02em; text-align: center; text-transform: uppercase; }
+.requests-header h1 { margin: 12px 0; font: 400 clamp(21px, 3vw, 36px)/1.15 Georgia, serif; color: #1e1e1c; }
 .requests-header p { margin: 0; color: #6b6253; }
+.requests-header-copy {
+  position: relative;
+  display: block;
+  width: 100%;
+  padding: 22px 18px 18px;
+  border: 1px solid #caba98;
+  background: #f5eedf;
+  box-shadow: 1px 3px 6px #3b291c26;
+}
+.requests-header-copy::before,
+.request-empty-card::before {
+  content: '';
+  position: absolute;
+  top: -7px;
+  left: 50%;
+  width: 13px;
+  height: 13px;
+  margin-left: -6px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #c6566d, #7a263a 70%);
+  box-shadow: 0 2px 3px #3b291c55;
+}
 
 .request-group { margin: 0 0 30px; }
 .request-group-heading {
@@ -92,6 +114,15 @@
 .request-button-quiet:hover:not(:disabled) { background: #e4d7bc; }
 
 .request-empty { margin: 0; color: #6b6253; font-size: 14px; }
+.request-empty-card {
+  position: relative;
+  display: block;
+  width: 100%;
+  padding: 22px 18px 18px;
+  border: 1px solid #caba98;
+  background: #f5eedf;
+  box-shadow: 1px 3px 6px #3b291c26;
+}
 .request-notice {
   margin: 12px 0 0;
   border-left: 2px solid #8d7c60;

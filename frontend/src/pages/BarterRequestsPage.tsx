@@ -61,7 +61,7 @@ export default function BarterRequestsPage() {
       <article key={item.id} className="request-card">
         <i className="request-pin" aria-hidden="true" />
         <span className="request-status">{STATUS_LABELS[item.status] ?? item.status}</span>
-        <h3>{item.summary}</h3>
+        <h3>{item.summary.trim().toLowerCase() === 'bio' ? 'Biology' : item.summary}</h3>
         <p>
           {incoming ? 'Proposed by' : 'Sent to'} {item.other.name}
           {item.other.file_code ? ` · ${item.other.file_code}` : ''}
@@ -92,7 +92,7 @@ export default function BarterRequestsPage() {
         {items.length ? (
           <div className="request-list">{items.map(item => card(item, incoming))}</div>
         ) : (
-          <p className="request-empty">{note}</p>
+          <p className={`request-empty${title === 'Needs your answer' || title === 'Closed' ? ' request-empty-card' : ''}`}>{note}</p>
         )}
       </section>
     )
@@ -130,7 +130,7 @@ export default function BarterRequestsPage() {
         <header className="requests-header">
           <span className="requests-kicker">The exchange ledger</span>
           <h1>Barter requests</h1>
-          <p>Every trade you proposed, and every one proposed to you.</p>
+          <p className="requests-header-copy">Every trade you proposed, and every one proposed to you.</p>
         </header>
 
         <div role="alert" aria-atomic="true">
