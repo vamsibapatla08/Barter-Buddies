@@ -1,3 +1,4 @@
+import { supabase } from './supabase'
 import { useLayoutEffect, useRef, useState } from 'react'
 import type { FormEvent } from 'react'
 import './LoginPage.css'
@@ -108,16 +109,21 @@ export default function AddDetailsPage() {
     }
   }, [])
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault()
-    if (password !== confirmPassword) {
-      setPasswordError('Passwords do not match.')
-      return
-    }
-    setPasswordError('')
-    setSubmitted(true)
-    window.location.assign('/create-listing')
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  event.preventDefault()
+
+  if (password !== confirmPassword) {
+    setPasswordError('Passwords do not match.')
+    return
   }
+
+  setPasswordError('')
+
+  const form = new FormData(event.currentTarget)
+
+  const email = String(form.get('email') ?? '')
+  const name = String(form.get('name') ?? '')
+
 
   return (
     <main className="login-page details-page" ref={board}>
