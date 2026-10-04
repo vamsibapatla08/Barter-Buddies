@@ -1,14 +1,82 @@
+<<<<<<< HEAD
 import { useLayoutEffect, useRef, useState } from 'react'
 import { createListing } from '../lib/api'
 import { SKILLS } from '../lib/skills'
+=======
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
+import type { FormEvent } from 'react'
+import { createListing, getSkills } from '../lib/api'
+import { SPOTS, TIME_OPTIONS, dateOptions } from '../lib/schedule'
+import type { ListingMode, Skill } from '../types'
+>>>>>>> e13a31ac52a5c304b2188da547b6a3859c0dc118
 import './LoginPage.css'
 import './CreateListingPage.css'
 
 export default function CreateListingPage() {
   const board = useRef<HTMLElement>(null)
   const [threads, setThreads] = useState<string[]>([])
+<<<<<<< HEAD
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState('')
+=======
+  const [skills, setSkills] = useState<Skill[]>([])
+  const [skillsError, setSkillsError] = useState('')
+
+  // Computed once per mount so the list always starts at today.
+  const [dates] = useState<string[]>(() => dateOptions())
+
+  const [title, setTitle] = useState('')
+  const [detail, setDetail] = useState('')
+  const [offer, setOffer] = useState('')
+  const [ask, setAsk] = useState('')
+  const [date, setDate] = useState('')
+  const [time, setTime] = useState('')
+  const [mode, setMode] = useState<ListingMode | ''>('')
+  const [place, setPlace] = useState('')
+  const [confirmed, setConfirmed] = useState(false)
+  const [posting, setPosting] = useState(false)
+  const [submitError, setSubmitError] = useState('')
+
+  const online = mode === 'online'
+
+  useEffect(() => {
+    getSkills()
+      .then(setSkills)
+      .catch((error: Error) => setSkillsError(error.message || 'Could not load the skill list.'))
+  }, [])
+>>>>>>> e13a31ac52a5c304b2188da547b6a3859c0dc118
+
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault()
+    if (posting) return
+    setSubmitError('')
+
+    if (!title.trim() || !detail.trim() || !offer || !date || !time || !mode || !confirmed) {
+      setSubmitError('Fill in every field before publishing.')
+      return
+    }
+    if (!online && !place) {
+      setSubmitError('Choose a place, or switch the mode to Online.')
+      return
+    }
+
+    setPosting(true)
+    try {
+      const created = await createListing({
+        title: title.trim(),
+        description: detail.trim(),
+        category: offer,
+        meet_spot: online ? null : place,
+        mode,
+        available_when: `${date}, ${time}`,
+      })
+      localStorage.setItem('myListingId', created.id)
+      window.location.assign('/browse')
+    } catch (error) {
+      setSubmitError((error as Error).message || 'Could not publish that listing.')
+      setPosting(false)
+    }
+  }
 
   useLayoutEffect(() => {
     const root = board.current
@@ -84,6 +152,7 @@ export default function CreateListingPage() {
             <h1 id="listing-heading">Publish a Barter</h1>
             <p className="listing-intro">Start a listing and give the crew the coordinates for a fair exchange.</p>
           </header>
+<<<<<<< HEAD
           <form onSubmit={event => {
             event.preventDefault()
             if (submitting) return
@@ -115,10 +184,18 @@ export default function CreateListingPage() {
               })
               .finally(() => setSubmitting(false))
           }}>
+=======
+          <form onSubmit={handleSubmit} aria-busy={posting}>
+>>>>>>> e13a31ac52a5c304b2188da547b6a3859c0dc118
             <fieldset className="listing-box">
               <legend>Listing</legend>
               <label htmlFor="listing-title">Start a listing</label>
-              <input id="listing-title" name="title" type="text" placeholder="What can you teach or help with?" required />
+              <input id="listing-title" name="title" type="text" placeholder="What can you teach or help with?" required
+                value={title} disabled={posting} onChange={event => setTitle(event.target.value)} />
+              <label htmlFor="listing-detail">Describe your offer</label>
+              <textarea id="listing-detail" name="description" rows={3} required
+                placeholder="What exactly will you do, and what should they bring?"
+                value={detail} disabled={posting} onChange={event => setDetail(event.target.value)} />
             </fieldset>
             <fieldset className="listing-box">
               <legend>Description</legend>
@@ -128,35 +205,98 @@ export default function CreateListingPage() {
             <fieldset className="listing-box">
               <legend>Offer</legend>
               <label htmlFor="listing-offer">What are you offering?</label>
+<<<<<<< HEAD
               <select id="listing-offer" name="offer" defaultValue="" required>
                 <option value="" disabled>Select a skill</option>
                 {SKILLS.map(skill => <option key={skill.id} value={skill.id}>{skill.label}</option>)}
+=======
+              <select id="listing-offer" name="offer" required disabled={posting || !skills.length}
+                value={offer} onChange={event => setOffer(event.target.value)}>
+                <option value="" disabled>{skills.length ? 'Select a skill' : 'Loading skills…'}</option>
+                {skills.map(skill => <option key={skill.id} value={skill.id}>{skill.label}</option>)}
+>>>>>>> e13a31ac52a5c304b2188da547b6a3859c0dc118
               </select>
             </fieldset>
             <fieldset className="listing-box">
               <legend>Counter Ask</legend>
               <label htmlFor="listing-ask">What would make this a fair exchange?</label>
+<<<<<<< HEAD
               <select id="listing-ask" name="ask" defaultValue="" required>
                 <option value="" disabled>Select a skill needed</option>
                 {SKILLS.map(skill => <option key={skill.id} value={skill.id}>{skill.label}</option>)}
+=======
+              <select id="listing-ask" name="ask" required disabled={posting || !skills.length}
+                value={ask} onChange={event => setAsk(event.target.value)}>
+                <option value="" disabled>{skills.length ? 'Select a skill needed' : 'Loading skills…'}</option>
+                {skills.map(skill => <option key={skill.id} value={skill.id}>{skill.label}</option>)}
+>>>>>>> e13a31ac52a5c304b2188da547b6a3859c0dc118
               </select>
             </fieldset>
             <fieldset className="listing-box listing-coordinates">
               <legend>Coordinates</legend>
+<<<<<<< HEAD
               <div><label htmlFor="listing-date">Date</label><input id="listing-date" name="date" type="text" placeholder="Thu 9 Oct" required /></div>
               <div><label htmlFor="listing-time">Time</label><input id="listing-time" name="time" type="text" placeholder="6:00 PM" required /></div>
               <div><label htmlFor="listing-place">Place</label><input id="listing-place" name="place" type="text" placeholder="Enter a meetup place" /></div>
               <div><label htmlFor="listing-mode">Mode</label><select id="listing-mode" name="mode" defaultValue="" required><option value="" disabled>Select mode</option><option value="in_person">In person</option><option value="online">Online</option></select></div>
+=======
+              <div>
+                <label htmlFor="listing-date">Date</label>
+                <select id="listing-date" name="date" required value={date} disabled={posting}
+                  onChange={event => setDate(event.target.value)}>
+                  <option value="" disabled>Select a date</option>
+                  {dates.map(option => <option key={option} value={option}>{option}</option>)}
+                </select>
+              </div>
+              <div>
+                <label htmlFor="listing-time">Time</label>
+                <select id="listing-time" name="time" required value={time} disabled={posting}
+                  onChange={event => setTime(event.target.value)}>
+                  <option value="" disabled>Select a time</option>
+                  {TIME_OPTIONS.map(option => <option key={option} value={option}>{option}</option>)}
+                </select>
+              </div>
+              <div>
+                <label htmlFor="listing-mode">Mode</label>
+                <select id="listing-mode" name="mode" required value={mode} disabled={posting}
+                  onChange={event => setMode(event.target.value as ListingMode)}>
+                  <option value="" disabled>Select a mode</option>
+                  <option value="in_person">In person</option>
+                  <option value="online">Online</option>
+                </select>
+              </div>
+              <div>
+                <label htmlFor="listing-place">Place</label>
+                <select id="listing-place" name="place" required={!online} value={online ? '' : place}
+                  disabled={posting || online}
+                  aria-describedby={online ? 'listing-place-note' : undefined}
+                  onChange={event => setPlace(event.target.value)}>
+                  <option value="" disabled>{online ? 'Not needed online' : 'Select a place'}</option>
+                  {SPOTS.map(spot => <option key={spot} value={spot}>{spot}</option>)}
+                </select>
+                {online && <p id="listing-place-note" className="listing-place-note">Online barters need no meeting spot.</p>}
+              </div>
+>>>>>>> e13a31ac52a5c304b2188da547b6a3859c0dc118
             </fieldset>
             {error && <div className="listing-skill-error" role="alert"><p>{error}</p><button type="submit" disabled={submitting}>{submitting ? 'Posting…' : 'Retry'}</button></div>}
             <fieldset className="listing-box listing-validate">
               <legend>Validate Listing</legend>
-              <label><input type="checkbox" required /> Confirmed the barter details.</label>
+              <label><input type="checkbox" required checked={confirmed} disabled={posting}
+                onChange={event => setConfirmed(event.target.checked)} /> Confirmed the barter details.</label>
             </fieldset>
             <div className="listing-actions">
               <a className="listing-skip listing-back" href="/add-details" aria-label="Go back to add your details">← Back</a>
+<<<<<<< HEAD
               <button className="details-submit listing-publish" type="submit" disabled={submitting}>{submitting ? 'Posting…' : 'Publish'}</button>
+=======
+              <button className="details-submit listing-publish" type="submit" disabled={posting}>
+                {posting ? 'Posting…' : 'Publish'}
+              </button>
+>>>>>>> e13a31ac52a5c304b2188da547b6a3859c0dc118
               <a className="listing-skip" href="/home" aria-label="Go to the home page">Home</a>
+            </div>
+            <div role="alert" aria-atomic="true">
+              {submitError && <p className="listing-submit-error">{submitError}</p>}
             </div>
           </form>
         </section>

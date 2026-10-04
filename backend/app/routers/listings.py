@@ -20,11 +20,12 @@ def get_skills(user_id: str = Depends(current_user)):
 def create_listing(body: ListingIn, user_id: str = Depends(current_user)):
     with connection() as conn, conn.cursor() as cur:
         cur.execute(
-            """INSERT INTO listings (owner_id, skill_id, title, detail)
-               SELECT %s, s.id, %s, %s FROM skills s WHERE s.id = %s
+            """INSERT INTO listings (owner_id, skill_id, title, detail, meet_spot, mode, available_when)
+               SELECT %s, s.id, %s, %s, %s, %s, %s FROM skills s WHERE s.id = %s
                RETURNING id, title, detail AS description, skill_id,
+                         meet_spot, mode, available_when,
                          (SELECT category FROM skills WHERE id = skill_id) AS category""",
-            (user_id, body.title, body.description, body.category),
+            (user_id, body.title, body.description, body.meet_spot, body.mode, body.available_when, body.category),
         )
         row = cur.fetchone()
     if row is None:

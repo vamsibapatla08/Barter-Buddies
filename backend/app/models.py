@@ -1,5 +1,6 @@
 from __future__ import annotations
 from datetime import datetime
+from typing import Literal
 
 from pydantic import BaseModel, Field
 
@@ -16,7 +17,12 @@ class PersonRef(BaseModel):
 class ListingIn(BaseModel):
     title: str = Field(min_length=1, max_length=120)
     description: str = Field(min_length=1, max_length=2000)
+    # category carries a skills.id, e.g. "CALCULUS_TUTORING".
     category: str = Field(min_length=1, max_length=80)
+    meet_spot: str | None = Field(default=None, max_length=120)
+    mode: Literal["in_person", "online"] | None = None
+    # Date and time together in one string, e.g. "Thu 9 Oct, 6:00 PM".
+    available_when: str | None = Field(default=None, max_length=120)
 
 
 class ListingOut(ListingIn):

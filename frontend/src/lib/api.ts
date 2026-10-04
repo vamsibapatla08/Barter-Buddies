@@ -1,14 +1,19 @@
 import { supabase } from './supabase'
+<<<<<<< HEAD
 import type { Listing, ListingCreateIn, Match, Skill } from '../types'
+=======
+import type { CreatedListing, Listing, ListingInput, Match, Skill } from '../types'
+>>>>>>> e13a31ac52a5c304b2188da547b6a3859c0dc118
 
 const API_URL = import.meta.env.VITE_API_URL
 
-/** Thrown when there is no Supabase session to authenticate the request with. */
-export const SIGN_IN_REQUIRED = 'Please sign in to see the board.'
+export const SUPABASE_NOT_CONFIGURED =
+  'Supabase is not configured. Check VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY.'
+export const NOT_SIGNED_IN = 'You are not signed in. Please sign in again.'
 
 export async function apiFetch<T>(path: string, options: RequestInit = {}): Promise<T> {
   if (!supabase) {
-    throw new Error(SIGN_IN_REQUIRED)
+    throw new Error(SUPABASE_NOT_CONFIGURED)
   }
 
   const {
@@ -16,7 +21,7 @@ export async function apiFetch<T>(path: string, options: RequestInit = {}): Prom
   } = await supabase.auth.getSession()
 
   if (!session?.access_token) {
-    throw new Error(SIGN_IN_REQUIRED)
+    throw new Error(NOT_SIGNED_IN)
   }
 
   const response = await fetch(`${API_URL}${path}`, {
@@ -24,27 +29,37 @@ export async function apiFetch<T>(path: string, options: RequestInit = {}): Prom
     headers: {
       'Content-Type': 'application/json',
       ...options.headers,
+      // Spread last so options.headers can never clobber the token.
       Authorization: `Bearer ${session.access_token}`,
     },
   })
 
   if (!response.ok) {
-    throw new Error(await errorMessage(response))
+    throw new Error(await errorMessage(path, response))
   }
 
   return response.json() as Promise<T>
 }
 
 // CONTRACT.md: every error but 422 returns { detail: "message" }, safe to show as is.
-async function errorMessage(response: Response): Promise<string> {
-  if (response.status === 401) return SIGN_IN_REQUIRED
-  if (response.status === 422) return 'Something was wrong with that request.'
+// A 401 reads the body too, so the backend's own reason is never hidden.
+async function errorMessage(path: string, response: Response): Promise<string> {
+  const raw = await response.text().catch(() => '')
+  let detail = ''
   try {
-    const body = await response.json()
-    if (typeof body?.detail === 'string') return body.detail
+    const body = JSON.parse(raw)
+    if (typeof body?.detail === 'string') detail = body.detail
   } catch {
-    // Fall through to the status code.
+    // Not JSON; fall back to the raw text below.
   }
+
+  console.error(`API ${response.status} on ${path}:`, raw || '(empty body)')
+
+  if (response.status === 401) {
+    return `The server rejected your login: ${detail || raw || `HTTP ${response.status}`}`
+  }
+  if (response.status === 422) return 'Something was wrong with that request.'
+  if (detail) return detail
   return `Could not reach the board (HTTP ${response.status}).`
 }
 
@@ -53,8 +68,13 @@ export function getFeed(category?: string): Promise<Listing[]> {
   return apiFetch<Listing[]>(`/feed${query}`)
 }
 
+<<<<<<< HEAD
 export function createListing(body: ListingCreateIn): Promise<Listing> {
   return apiFetch<Listing>('/listings', {
+=======
+export function createListing(body: ListingInput): Promise<CreatedListing> {
+  return apiFetch<CreatedListing>('/listings', {
+>>>>>>> e13a31ac52a5c304b2188da547b6a3859c0dc118
     method: 'POST',
     body: JSON.stringify(body),
   })
