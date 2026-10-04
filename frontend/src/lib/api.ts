@@ -1,5 +1,14 @@
 import { supabase } from './supabase'
-import type { CreatedListing, Listing, ListingInput, Match, Skill } from '../types'
+import type {
+  CreatedListing,
+  ExchangeOut,
+  Listing,
+  ListingDetail,
+  ListingInput,
+  Match,
+  ProposeInput,
+  Skill,
+} from '../types'
 
 const API_URL = import.meta.env.VITE_API_URL
 
@@ -66,6 +75,18 @@ export function getFeed(category?: string): Promise<Listing[]> {
 
 export function createListing(body: ListingInput): Promise<CreatedListing> {
   return apiFetch<CreatedListing>('/listings', {
+    method: 'POST',
+    body: JSON.stringify(body),
+  })
+}
+
+/** GET /listings/{id}. Used to show your own listing, which /feed excludes. */
+export function getListing(id: string): Promise<ListingDetail> {
+  return apiFetch<ListingDetail>(`/listings/${encodeURIComponent(id)}`)
+}
+
+export function proposeExchange(body: ProposeInput): Promise<ExchangeOut> {
+  return apiFetch<ExchangeOut>('/exchanges', {
     method: 'POST',
     body: JSON.stringify(body),
   })

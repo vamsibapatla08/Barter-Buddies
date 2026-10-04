@@ -53,6 +53,45 @@ export type CreatedListing = {
   available_when: string | null
 }
 
+/** Response of GET /listings/{id}. Like CreatedListing, plus the owner. */
+export type ListingDetail = CreatedListing & {
+  owner: PersonRef
+}
+
+/** Terms of an exchange. Mirrors TermsIn in backend/app/models.py. */
+export type ExchangeTerms = {
+  requester_gives: string
+  recipient_gives: string
+  when: string
+  where: string
+  mode: string
+  note?: string | null
+}
+
+/** Body of POST /exchanges. */
+export type ProposeInput = {
+  recipient_id: string
+  requester_listing_id: string
+  recipient_listing_id: string
+  terms: ExchangeTerms
+  source: 'browse' | 'match'
+}
+
+/** Response of POST /exchanges. */
+export type ExchangeOut = {
+  id: string
+  status: string
+  created_at: string
+  source: string
+  requester: PersonRef
+  recipient: PersonRef
+  terms: ExchangeTerms
+  locked_at?: string | null
+  requester_completed: boolean
+  recipient_completed: boolean
+  thread_id?: string | null
+}
+
 export type Match = {
   user_id: string
   name: string
